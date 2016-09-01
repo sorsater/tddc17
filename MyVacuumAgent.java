@@ -187,6 +187,18 @@ class MyAgentProgram implements AgentProgram {
 	    
 	    
 	    // Next action selection based on the percept value
+	    if (state.DoneWithMapping()){
+	    	if(state.DoneWithCleaning()){
+	    		return LIUVacuumEnvironment.state.goToHome();
+	    	}
+	    	else {
+	    		state.clean();
+	    	}
+	    }
+	    else{
+	    	state.mapWorld();
+	    }
+	    
 	    if (dirt)
 	    {
 	    	System.out.println("DIRT -> choosing SUCK action!");
@@ -206,7 +218,41 @@ class MyAgentProgram implements AgentProgram {
 	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 	    	}
 	    }
+	    
+	    
 	}
+	public int goHome(){
+		if(state.agent_x_position > 1){
+			if (state.agent_direction == state.WEST){
+				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+				return state.ACTION_MOVE_FORWARD;
+			}
+			else {
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return state.ACTION_TURN_LEFT;
+						
+			}
+		}
+		else if(state.agent_y_position > 1){
+			if (state.agent_direction == state.NORTH){
+				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+				return state.ACTION_MOVE_FORWARD;
+			}
+			else {
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return state.ACTION_TURN_LEFT;
+						
+			}
+		}
+		else {
+			System.out.println("HOME SWEET HOME!");
+			state.agent_last_action = state.ACTION_NONE;
+			return state.ACTION_NONE;
+		}
+		
+	}
+	
+	
 }
 
 public class MyVacuumAgent extends AbstractAgent {
@@ -214,3 +260,4 @@ public class MyVacuumAgent extends AbstractAgent {
     	super(new MyAgentProgram());
 	}
 }
+
