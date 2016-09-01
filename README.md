@@ -1,2 +1,2 @@
-# tddc17-labs
+# TDDC17
 A repository for labs in TDDC17 - AI
