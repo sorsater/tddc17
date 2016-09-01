@@ -23,17 +23,17 @@ class MyAgentState
 	final int ACTION_TURN_RIGHT 	= 2;
 	final int ACTION_TURN_LEFT 		= 3;
 	final int ACTION_SUCK	 		= 4;
-	
+
 	public int agent_x_position = 1;
 	public int agent_y_position = 1;
 	public int agent_last_action = ACTION_NONE;
-	
+
 	public static final int NORTH = 0;
 	public static final int EAST = 1;
 	public static final int SOUTH = 2;
 	public static final int WEST = 3;
 	public int agent_direction = EAST;
-	
+
 	MyAgentState()
 	{
 		for (int i=0; i < world.length; i++)
@@ -64,14 +64,14 @@ class MyAgentState
 				break;
 			}
 	    }
-		
+
 	}
-	
+
 	public void updateWorld(int x_position, int y_position, int info)
 	{
 		world[x_position][y_position] = info;
 	}
-	
+
 	public void printWorldDebug()
 	{
 		for (int i=0; i < world.length; i++)
@@ -98,11 +98,11 @@ class MyAgentProgram implements AgentProgram {
 
 	private int initnialRandomActions = 10;
 	private Random random_generator = new Random();
-	
+
 	// Here you can define your variables!
 	public int iterationCounter = 10;
 	public MyAgentState state = new MyAgentState();
-	
+
 	// moves the Agent to a random start position
 	// uses percepts to update the Agent position - only the position, other percepts are ignored
 	// returns a random action
@@ -112,7 +112,7 @@ class MyAgentProgram implements AgentProgram {
 		state.updatePosition(percept);
 		if(action==0) {
 		    state.agent_direction = ((state.agent_direction-1) % 4);
-		    if (state.agent_direction<0) 
+		    if (state.agent_direction<0)
 		    	state.agent_direction +=4;
 		    state.agent_last_action = state.ACTION_TURN_LEFT;
 			return LIUVacuumEnvironment.ACTION_TURN_LEFT;
@@ -120,37 +120,47 @@ class MyAgentProgram implements AgentProgram {
 			state.agent_direction = ((state.agent_direction+1) % 4);
 		    state.agent_last_action = state.ACTION_TURN_RIGHT;
 		    return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-		} 
+		}
 		state.agent_last_action=state.ACTION_MOVE_FORWARD;
 		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 	}
-	
-	
+
+	public void updateDirection(int direction){
+		state.agent_direction += 1;
+		if(state.agent_direction > 3){
+			state.agent_direction -= 4;
+		}
+	}
+
+
 	@Override
 	public Action execute(Percept percept) {
-		
-		// DO NOT REMOVE this if condition!!!
+
+			// DO NOT REMOVE this if condition!!!
     	if (initnialRandomActions>0) {
     		return moveToRandomStartPosition((DynamicPercept) percept);
-    	} else if (initnialRandomActions==0) {
+    	}
+			else if (initnialRandomActions==0) {
     		// process percept for the last step of the initial random actions
     		initnialRandomActions--;
     		state.updatePosition((DynamicPercept) percept);
-			System.out.println("Processing percepts after the last execution of moveToRandomStartPosition()");
-			state.agent_last_action=state.ACTION_SUCK;
+				System.out.println("Processing percepts after the last execution of moveToRandomStartPosition()");
+				state.agent_last_action=state.ACTION_SUCK;
 	    	return LIUVacuumEnvironment.ACTION_SUCK;
     	}
-		
+
     	// This example agent program will update the internal agent state while only moving forward.
     	// START HERE - code below should be modified!
-    	    	
+
+			state.updatePosition((DynamicPercept) percept);
+
     	System.out.println("x=" + state.agent_x_position);
     	System.out.println("y=" + state.agent_y_position);
     	System.out.println("dir=" + state.agent_direction);
-    	
-		
-	    iterationCounter--;
-	    
+
+
+	    //iterationCounter--;
+
 	    if (iterationCounter==0)
 	    	return NoOpAction.NO_OP;
 
@@ -159,35 +169,71 @@ class MyAgentProgram implements AgentProgram {
 	    Boolean dirt = (Boolean)p.getAttribute("dirt");
 	    Boolean home = (Boolean)p.getAttribute("home");
 	    System.out.println("percept: " + p);
-	    
+
 	    // State update based on the percept value and the last action
 	    state.updatePosition((DynamicPercept)percept);
 	    if (bump) {
-			switch (state.agent_direction) {
-			case MyAgentState.NORTH:
-				state.updateWorld(state.agent_x_position,state.agent_y_position-1,state.WALL);
-				break;
-			case MyAgentState.EAST:
-				state.updateWorld(state.agent_x_position+1,state.agent_y_position,state.WALL);
-				break;
-			case MyAgentState.SOUTH:
-				state.updateWorld(state.agent_x_position,state.agent_y_position+1,state.WALL);
-				break;
-			case MyAgentState.WEST:
-				state.updateWorld(state.agent_x_position-1,state.agent_y_position,state.WALL);
-				break;
-			}
+				switch (state.agent_direction) {
+				case MyAgentState.NORTH:
+					state.updateWorld(state.agent_x_position,state.agent_y_position-1,state.WALL);
+					break;
+				case MyAgentState.EAST:
+					state.updateWorld(state.agent_x_position+1,state.agent_y_position,state.WALL);
+					break;
+				case MyAgentState.SOUTH:
+					state.updateWorld(state.agent_x_position,state.agent_y_position+1,state.WALL);
+					break;
+				case MyAgentState.WEST:
+					state.updateWorld(state.agent_x_position-1,state.agent_y_position,state.WALL);
+					break;
+				}
 	    }
-	    if (dirt)
-	    	state.updateWorld(state.agent_x_position,state.agent_y_position,state.DIRT);
-	    else
+			if (dirt){
+				state.updateWorld(state.agent_x_position,state.agent_y_position,state.DIRT);
+			}
+	    else{
 	    	state.updateWorld(state.agent_x_position,state.agent_y_position,state.CLEAR);
-	    
-	    state.printWorldDebug();
-	    
-	    
-	    // Next action selection based on the percept value
-	    if (state.DoneWithMapping()){
+			}
+	  //  state.printWorldDebug();
+
+	  // Next action selection based on the percept value
+		//return LIUVacuumEnvironment.goHome();
+
+		System.out.println("Going home");
+		System.out.println("My direction: " + state.agent_direction);
+		System.out.println("x: " + state.agent_x_position + " y: " + state.agent_y_position);
+		if(state.agent_x_position > 1){
+			if (state.agent_direction == state.WEST){
+				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+			}
+			else {
+				updateDirection(state.ACTION_TURN_LEFT);
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+
+			}
+		}
+		else if(state.agent_y_position > 1){
+			if (state.agent_direction == state.NORTH){
+				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+			}
+			else {
+				updateDirection(state.ACTION_TURN_LEFT);
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+
+			}
+		}
+		else {
+			System.out.println("HOME SWEET HOME!");
+			state.agent_last_action = state.ACTION_NONE;
+			return NoOpAction.NO_OP;
+		}
+
+
+/*	    if (state.DoneWithMapping()){
 	    	if(state.DoneWithCleaning()){
 	    		return LIUVacuumEnvironment.state.goToHome();
 	    	}
@@ -198,13 +244,16 @@ class MyAgentProgram implements AgentProgram {
 	    else{
 	    	state.mapWorld();
 	    }
-	    
+*/
+
+
+/*
 	    if (dirt)
 	    {
 	    	System.out.println("DIRT -> choosing SUCK action!");
 	    	state.agent_last_action=state.ACTION_SUCK;
 	    	return LIUVacuumEnvironment.ACTION_SUCK;
-	    } 
+	    }
 	    else
 	    {
 	    	if (bump)
@@ -217,42 +266,10 @@ class MyAgentProgram implements AgentProgram {
 	    		state.agent_last_action=state.ACTION_MOVE_FORWARD;
 	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 	    	}
-	    }
-	    
-	    
+	    }*/
+
+
 	}
-	public int goHome(){
-		if(state.agent_x_position > 1){
-			if (state.agent_direction == state.WEST){
-				state.agent_last_action = state.ACTION_MOVE_FORWARD;
-				return state.ACTION_MOVE_FORWARD;
-			}
-			else {
-				state.agent_last_action = state.ACTION_TURN_LEFT;
-				return state.ACTION_TURN_LEFT;
-						
-			}
-		}
-		else if(state.agent_y_position > 1){
-			if (state.agent_direction == state.NORTH){
-				state.agent_last_action = state.ACTION_MOVE_FORWARD;
-				return state.ACTION_MOVE_FORWARD;
-			}
-			else {
-				state.agent_last_action = state.ACTION_TURN_LEFT;
-				return state.ACTION_TURN_LEFT;
-						
-			}
-		}
-		else {
-			System.out.println("HOME SWEET HOME!");
-			state.agent_last_action = state.ACTION_NONE;
-			return state.ACTION_NONE;
-		}
-		
-	}
-	
-	
 }
 
 public class MyVacuumAgent extends AbstractAgent {
@@ -260,4 +277,3 @@ public class MyVacuumAgent extends AbstractAgent {
     	super(new MyAgentProgram());
 	}
 }
-
