@@ -34,6 +34,10 @@ class MyAgentState
 	public static final int WEST = 3;
 	public int agent_direction = EAST;
 
+	public int imHome = 0;
+	public int goal_x;
+	public int goal_y;
+
 	MyAgentState()
 	{
 		for (int i=0; i < world.length; i++)
@@ -83,7 +87,7 @@ class MyAgentState
 				if (world[j][i]==WALL)
 					System.out.print(" # ");
 				if (world[j][i]==CLEAR)
-					System.out.print(" . ");
+					System.out.print(" c ");
 				if (world[j][i]==DIRT)
 					System.out.print(" D ");
 				if (world[j][i]==HOME)
@@ -114,10 +118,14 @@ class MyAgentProgram implements AgentProgram {
 		    state.agent_direction = ((state.agent_direction-1) % 4);
 		    if (state.agent_direction<0)
 		    	state.agent_direction +=4;
+					System.out.println("DIR: " + state.agent_direction);
+
 		    state.agent_last_action = state.ACTION_TURN_LEFT;
 			return LIUVacuumEnvironment.ACTION_TURN_LEFT;
 		} else if (action==1) {
 			state.agent_direction = ((state.agent_direction+1) % 4);
+			System.out.println("DIR: " + state.agent_direction);
+
 		    state.agent_last_action = state.ACTION_TURN_RIGHT;
 		    return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
 		}
@@ -126,15 +134,96 @@ class MyAgentProgram implements AgentProgram {
 	}
 
 	public void updateDirection(int direction){
-		state.agent_direction += 1;
-		if(state.agent_direction > 3){
-			state.agent_direction -= 4;
+		System.out.println("DIR: " + state.agent_direction);
+		if(direction == 2){
+			state.agent_direction = (state.agent_direction + 1) % 4;
+		}
+		else if(direction == 3){
+			state.agent_direction -= 1;
+
+			if(state.agent_direction < 0){
+				state.agent_direction += 4;
+			}
+		}
+		System.out.println("DIR: " + state.agent_direction);
+	}
+
+	public Action goTo(int x, int y){
+		// to much east
+		if(state.agent_x_position > x){
+			if (state.agent_direction == state.WEST){
+				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+			}
+			else {
+				updateDirection(state.ACTION_TURN_LEFT);
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+
+			}
+		}
+		// to much south
+		else if(state.agent_y_position > y){
+			if (state.agent_direction == state.NORTH){
+				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+			}
+			else {
+				updateDirection(state.ACTION_TURN_LEFT);
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+
+			}
+		}
+		// to much west
+		else if(state.agent_x_position < x){
+			if (state.agent_direction == state.EAST){
+				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+			}
+			else {
+				updateDirection(state.ACTION_TURN_LEFT);
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+
+			}
+		}
+		// to much north
+		else if(state.agent_y_position < y){
+			if (state.agent_direction == state.SOUTH){
+				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+			}
+			else {
+				updateDirection(state.ACTION_TURN_LEFT);
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+
+			}
+		}
+		else {
+			System.out.println("HOME SWEET HOME!");
+		//	state.agent_last_action = state.ACTION_NONE;
+			state.imHome = 1;
+
+
+			// SUPER BAD CODE
+		
+
+
+
+			// BAD CODE
+			updateDirection(state.ACTION_TURN_LEFT);
+			state.agent_last_action = state.ACTION_TURN_LEFT;
+			return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+			// bad code ends here
 		}
 	}
 
 
 	@Override
 	public Action execute(Percept percept) {
+
 
 			// DO NOT REMOVE this if condition!!!
     	if (initnialRandomActions>0) {
@@ -151,13 +240,13 @@ class MyAgentProgram implements AgentProgram {
 
     	// This example agent program will update the internal agent state while only moving forward.
     	// START HERE - code below should be modified!
-
-			state.updatePosition((DynamicPercept) percept);
-
+			System.out.println("==========================================================");
     	System.out.println("x=" + state.agent_x_position);
     	System.out.println("y=" + state.agent_y_position);
     	System.out.println("dir=" + state.agent_direction);
+			System.out.println("imhome: " + state.imHome);
 
+			state.printWorldDebug();
 
 	    //iterationCounter--;
 
@@ -197,40 +286,122 @@ class MyAgentProgram implements AgentProgram {
 	  //  state.printWorldDebug();
 
 	  // Next action selection based on the percept value
-		//return LIUVacuumEnvironment.goHome();
-
-		System.out.println("Going home");
 		System.out.println("My direction: " + state.agent_direction);
 		System.out.println("x: " + state.agent_x_position + " y: " + state.agent_y_position);
-		if(state.agent_x_position > 1){
-			if (state.agent_direction == state.WEST){
+
+		if(state.imHome == 0){
+			return goTo(1,1);
+		/*
+			if(state.agent_x_position > 1){
+				if (state.agent_direction == state.WEST){
+					state.agent_last_action = state.ACTION_MOVE_FORWARD;
+					return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+				}
+				else {
+					updateDirection(state.ACTION_TURN_LEFT);
+					state.agent_last_action = state.ACTION_TURN_LEFT;
+					return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+
+				}
+			}
+			else if(state.agent_y_position > 1){
+				if (state.agent_direction == state.NORTH){
+					state.agent_last_action = state.ACTION_MOVE_FORWARD;
+					return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+				}
+				else {
+					updateDirection(state.ACTION_TURN_LEFT);
+					state.agent_last_action = state.ACTION_TURN_LEFT;
+					return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+
+				}
+			}
+			else {
+				System.out.println("HOME SWEET HOME!");
+			//	state.agent_last_action = state.ACTION_NONE;
+				state.imHome = 1;
+			//	return NoOpAction.NO_OP;
+		}*/
+		}
+
+		if(state.imHome == 1){
+			if(state.agent_direction == state.EAST){
+				state.imHome = 2;
+				// glöm inte dammet
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 			}
 			else {
-				updateDirection(state.ACTION_TURN_LEFT);
 				state.agent_last_action = state.ACTION_TURN_LEFT;
+				updateDirection(state.ACTION_TURN_LEFT);
 				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
 
 			}
 		}
-		else if(state.agent_y_position > 1){
-			if (state.agent_direction == state.NORTH){
-				state.agent_last_action = state.ACTION_MOVE_FORWARD;
-				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+		if(state.imHome == 2){
+			if(dirt){
+				state.agent_last_action = state.ACTION_SUCK;
+				return LIUVacuumEnvironment.ACTION_SUCK;
 			}
-			else {
-				updateDirection(state.ACTION_TURN_LEFT);
-				state.agent_last_action = state.ACTION_TURN_LEFT;
-				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+			if(home){
+				state.imHome = 3;
+				state.printWorldDebug();
+				System.out.println("HDHDHDH");
+
+				int width = 0;
+				int height = 0;
+
+				for(int i = 1; i < 30; i++){
+					if(state.world[i][1] == state.WALL){
+						width = i - 1;
+						break;
+					}
+				}
+				for(int j = 1; j < 30; j++){
+					if(state.world[width][j] == state.WALL){
+						height = j - 1;
+						break;
+					}
+				}
+				System.out.println("WIDTH " + width + " HEIGHT: " + height);
+				state.printWorldDebug();
+
+				int type;
+
+				for(int i = 1 ; i <= width; i++){
+					for(int j = 1; j <= height; j++){
+						if(state.imHome != 4){
+							type = state.world[i][j];
+							System.out.println(i + " " + j + " " + type);
+							if(type == state.UNKNOWN){
+								state.imHome = 4;
+								state.goal_x = i;
+								state.goal_y = j;
+							}
+						}
+					}
+				}
+			//	return NoOpAction.NO_OP;
 
 			}
+			if(bump){
+				System.out.println("BUMPIS");
+				updateDirection(state.ACTION_TURN_RIGHT);
+				state.agent_last_action = state.ACTION_TURN_RIGHT;
+				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+			}
+			state.agent_last_action = state.ACTION_MOVE_FORWARD;
+			return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 		}
-		else {
-			System.out.println("HOME SWEET HOME!");
-			state.agent_last_action = state.ACTION_NONE;
-			return NoOpAction.NO_OP;
+
+		if(state.imHome == 4){
+				// CODE HERE
+				// TODO
+				return goTo(state.goal_x,state.goal_y);
 		}
+
+		return NoOpAction.NO_OP;
+
 
 
 /*	    if (state.DoneWithMapping()){
