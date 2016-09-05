@@ -56,8 +56,19 @@ class Node {
 	public int getY(){
 		return this.y;
 	}
-}
 
+  @Override public String toString() {
+    String res;
+    res = "Node: { \n";
+    res += "  X: " + this.x + "\n";
+    res += "  Y: " + this.y + "\n";
+    res += "  P_X: " + this.parent_x + "\n";
+    res += "  P_Y: " + this.parent_y + "\n";
+    res += "  d: " + this.distance + "\n";
+    res += "}\n";
+    return res;
+  }
+}
 
 class MyAgentState
 {
@@ -65,7 +76,6 @@ class MyAgentState
 	Node[][] nodeWorld = new Node[30][30];
 	Queue<Node> qNodes = new LinkedList<Node>();
 
-	public int initialized = 0;
 	final int UNKNOWN 	= 0;
 	final int WALL 		= 1;
 	final int CLEAR 	= 2;
@@ -75,7 +85,7 @@ class MyAgentState
 	final int ACTION_MOVE_FORWARD 	= 1;
 	final int ACTION_TURN_RIGHT 	= 2;
 	final int ACTION_TURN_LEFT 		= 3;
-	final int ACTION_SUCK	 		= 4;
+	final int ACTION_SUCK	 		= 4;//    return result.toString();
 
 	public int agent_x_position = 1;
 	public int agent_y_position = 1;
@@ -87,7 +97,6 @@ class MyAgentState
 	public static final int WEST = 3;
 	public int agent_direction = EAST;
 
-	public int imHome = 0;
 	public int goal_x = -1;
 	public int goal_y = -1;
 
@@ -199,7 +208,7 @@ class MyAgentProgram implements AgentProgram {
 		}
 		System.out.println("DIR: " + state.agent_direction);
 	}
-/*
+
 	public Action goTo(int x, int y){
 		// to much east
 		if(state.agent_x_position > x){
@@ -211,7 +220,6 @@ class MyAgentProgram implements AgentProgram {
 				updateDirection(state.ACTION_TURN_LEFT);
 				state.agent_last_action = state.ACTION_TURN_LEFT;
 				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-
 			}
 		}
 		// to much south
@@ -241,7 +249,8 @@ class MyAgentProgram implements AgentProgram {
 			}
 		}
 		// to much north
-		else if(state.agent_y_position < y){
+		//else if(state.agent_y_position < y){
+    else{
 			if (state.agent_direction == state.SOUTH){
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
@@ -253,40 +262,83 @@ class MyAgentProgram implements AgentProgram {
 
 			}
 		}
-		else {
-			System.out.println("HOME SWEET HOME!");
-		//	state.agent_last_action = state.ACTION_NONE;
-			state.imHome = 1;
+	}
+
+  public Action goToImproved(){
+    int H_X = state.agent_x_position;
+    int H_Y = state.agent_y_position;
+
+    int G_X = state.goal_x;
+    int G_Y = state.goal_y;
+
+    if(G_X == H_X && G_Y == H_Y){
+      findUnexplored();
+      G_X = state.goal_x;
+      G_Y = state.goal_y;
+    }
+
+    System.out.println("H_X: " + state.agent_x_position + " H_Y: " + state.agent_y_position);
+    System.out.println("G_X: " + G_X + " G_Y: " + G_Y);
+    System.out.println("P_X: " + state.nodeWorld[G_X][G_Y].getParent_x());
+    System.out.println("P_Y: " + state.nodeWorld[G_X][G_Y].getParent_y());
 
 
-			// SUPER BAD CODE
-			// BAD CODE
-			updateDirection(state.ACTION_TURN_LEFT);
-			state.agent_last_action = state.ACTION_TURN_LEFT;
-			return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-			// bad code ends here
-		}
-	}*/
-	// TODO fix return type. instead use queue by reference
-	public void BFSNode(int old_x,int old_y,int x,int y){
-		int c = state.nodeWorld[old_x][old_y].getDistance();
+    int P_X = state.nodeWorld[G_X][G_Y].getParent_x();
+    int P_Y = state.nodeWorld[G_X][G_Y].getParent_y();
 
+    System.out.println(state.nodeWorld[G_X][G_Y].toString());
+
+    int Prev_P_X = G_X;
+    int Prev_P_Y = G_Y;
+
+    while(true){
+      // loopa tills vi har en nod precis bredvid. gå till den.
+
+      System.out.println("Prev_P_X: " + Prev_P_X);
+      System.out.println("Prev_P_Y: " + Prev_P_Y);
+
+      if(P_X == H_X && P_Y == H_Y){
+        return goTo(Prev_P_X,Prev_P_Y);
+      }
+
+      System.out.println(P_X + " JDJJ " + P_Y);
+      System.out.println(state.nodeWorld[P_X][P_Y].toString());
+
+      Prev_P_X = P_X;
+      Prev_P_Y = P_Y;
+
+      P_X = state.nodeWorld[Prev_P_X][Prev_P_Y].getParent_x();
+      P_Y = state.nodeWorld[Prev_P_X][Prev_P_Y].getParent_y();
+    }
+  }
+
+	public Boolean BFSNode(int old_x,int old_y,int x,int y){
 		if(x < 1 || x >= 29 || y < 1 || y >= 29){
-			return;
+			return false;
 		}
+
+    int c = state.nodeWorld[old_x][old_y].getDistance();
+    System.out.println("COST IS: " + c);
+
 		if(state.nodeWorld[x][y].getDistance() == -1){
 			// TODO overkilla med direction som kostnad
-			// Måste fixa med WALL-e?
 			if(state.world[x][y] != state.WALL){
+
 				state.nodeWorld[x][y].setDistance(c + 1);
 				state.nodeWorld[x][y].setParent(old_x,old_y);
+
+        if(state.world[x][y] == state.UNKNOWN){
+          // go to this little sucker
+          System.out.println("come here: " + x + " : " + y);
+          return true;
+        }
 				state.qNodes.add(state.nodeWorld[x][y]);
 			}
 		}
+    return false;
 	}
 
 	public void findUnexplored(){
-		// BFS
 
 		for(int i = 0; i < 30; i++){
 			for(int j = 0; j < 30; j++){
@@ -294,50 +346,68 @@ class MyAgentProgram implements AgentProgram {
 			}
 		}
 
-	//	Queue<Node> qNodes = new LinkedList<Node>();
+    state.qNodes.clear();
 
 		state.nodeWorld[state.agent_x_position][state.agent_y_position].setDistance(0);
 		state.qNodes.add(state.nodeWorld[state.agent_x_position][state.agent_y_position]);
 
+    int x;
+    int y;
 		while(state.qNodes.size() > 0){
 			Node current = state.qNodes.poll();
 
-			int x = current.getX();
-			int y = current.getY();
+			x = current.getX();
+			y = current.getY();
 
-			BFSNode(x,y,x+1,y);
-			BFSNode(x,y,x-1,y);
-			BFSNode(x,y,x,y+1);
-			BFSNode(x,y,x,y-1);
+			if(BFSNode(x,y,x+1,y)){
+        state.goal_x = x + 1;
+        state.goal_y = y;
+        break;
+      }
+			if(BFSNode(x,y,x-1,y)){
+        state.goal_x = x - 1;
+        state.goal_y = y;
+        break;
+      }
+      if(BFSNode(x,y,x,y+1)){
+        state.goal_x = x;
+        state.goal_y = y + 1;
+        break;
+      }
+      if(BFSNode(x,y,x,y-1)){
+        state.goal_x = x;
+        state.goal_y = y - 1;
+        break;
+      }
 		}
-
-		for(int i = 0 ; i < 30; i++){
-			for(int j = 0 ; j < 30; j++){
-				System.out.print(" " + state.nodeWorld[j][i].distance + " ");
-			}
-			System.out.println("");
-		}
+    return;
 	}
 
 	public Action searchAndSuck(Boolean bump, Boolean dirt, Boolean home){
 
-		findUnexplored();
-
-		/*
 		if(state.goal_x == -1 && state.goal_y == -1){
 			findUnexplored();
 		}
+    if(dirt){
+      state.agent_last_action = state.ACTION_SUCK;
+      return LIUVacuumEnvironment.ACTION_SUCK;
+    }
 		if(bump){
-			System.out.println("BUMPIS");
 			findUnexplored();
-		}*/
-		return LIUVacuumEnvironment.ACTION_SUCK;
 
+      for(int i = 0 ; i < 7; i++){
+  			for(int j = 0 ; j < 7; j++){
+  				System.out.print(" " + state.nodeWorld[j][i].distance + " ");
+  			}
+  			System.out.println("");
+  		}
+		}
 
-
+    Action next = goToImproved();
+    System.out.println("NEXT: " + next);
+    return next;
 
 	}
-
 
 	@Override
 	public Action execute(Percept percept) {
@@ -396,178 +466,16 @@ class MyAgentProgram implements AgentProgram {
     else{
     	state.updateWorld(state.agent_x_position,state.agent_y_position,state.CLEAR);
 		}
-	  //  state.printWorldDebug();
 
 	  // Next action selection based on the percept value
 		System.out.println("==========================================================");
 		System.out.println("x=" + state.agent_x_position);
 		System.out.println("y=" + state.agent_y_position);
 		System.out.println("dir=" + state.agent_direction);
-		System.out.println("imhome: " + state.imHome);
 
 		state.printWorldDebug();
 
-		//findUnexplored();
-		// goal_x, goal_y
-
-		searchAndSuck(bump, dirt, home);
-
-		return LIUVacuumEnvironment.ACTION_SUCK;
-
-
-/*
-
-		if(state.imHome == 0){
-			return goTo(1,1);
-		/*
-			if(state.agent_x_position > 1){
-				if (state.agent_direction == state.WEST){
-					state.agent_last_action = state.ACTION_MOVE_FORWARD;
-					return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-				}
-				else {
-					updateDirection(state.ACTION_TURN_LEFT);
-					state.agent_last_action = state.ACTION_TURN_LEFT;
-					return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-
-				}
-			}
-			else if(state.agent_y_position > 1){
-				if (state.agent_direction == state.NORTH){
-					state.agent_last_action = state.ACTION_MOVE_FORWARD;
-					return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-				}
-				else {
-					updateDirection(state.ACTION_TURN_LEFT);
-					state.agent_last_action = state.ACTION_TURN_LEFT;
-					return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-
-				}
-			}
-			else {
-				System.out.println("HOME SWEET HOME!");
-			//	state.agent_last_action = state.ACTION_NONE;
-				state.imHome = 1;
-			//	return NoOpAction.NO_OP;
-		}/// JDJD
-		}
-
-		if(state.imHome == 1){
-			if(state.agent_direction == state.EAST){
-				state.imHome = 2;
-				// glöm inte dammet
-				state.agent_last_action = state.ACTION_MOVE_FORWARD;
-				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-			}
-			else {
-				state.agent_last_action = state.ACTION_TURN_LEFT;
-				updateDirection(state.ACTION_TURN_LEFT);
-				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-
-			}
-		}
-		if(state.imHome == 2){
-			if(dirt){
-				state.agent_last_action = state.ACTION_SUCK;
-				return LIUVacuumEnvironment.ACTION_SUCK;
-			}
-			if(home){
-				state.imHome = 3;
-				state.printWorldDebug();
-				System.out.println("HDHDHDH");
-
-				int width = 0;
-				int height = 0;
-
-				for(int i = 1; i < 30; i++){
-					if(state.world[i][1] == state.WALL){
-						width = i - 1;
-						break;
-					}
-				}
-				for(int j = 1; j < 30; j++){
-					if(state.world[width][j] == state.WALL){
-						height = j - 1;
-						break;
-					}
-				}
-				System.out.println("WIDTH " + width + " HEIGHT: " + height);
-				state.printWorldDebug();
-
-				int type;
-
-				for(int i = 1 ; i <= width; i++){
-					for(int j = 1; j <= height; j++){
-						if(state.imHome != 4){
-							type = state.world[i][j];
-							System.out.println(i + " " + j + " " + type);
-							if(type == state.UNKNOWN){
-								state.imHome = 4;
-								state.goal_x = i;
-								state.goal_y = j;
-							}
-						}
-					}
-				}
-			//	return NoOpAction.NO_OP;
-
-			}
-			if(bump){
-				System.out.println("BUMPIS");
-				updateDirection(state.ACTION_TURN_RIGHT);
-				state.agent_last_action = state.ACTION_TURN_RIGHT;
-				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-			}
-			state.agent_last_action = state.ACTION_MOVE_FORWARD;
-			return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-		}
-
-		if(state.imHome == 4){
-				// CODE HERE
-				// TODO
-				return goTo(state.goal_x,state.goal_y);
-		}
-
-		return NoOpAction.NO_OP;
-
-
-
-/*	    if (state.DoneWithMapping()){
-	    	if(state.DoneWithCleaning()){
-	    		return LIUVacuumEnvironment.state.goToHome();
-	    	}
-	    	else {
-	    		state.clean();
-	    	}
-	    }
-	    else{
-	    	state.mapWorld();
-	    }
-*/
-
-
-/*
-	    if (dirt)
-	    {
-	    	System.out.println("DIRT -> choosing SUCK action!");
-	    	state.agent_last_action=state.ACTION_SUCK;
-	    	return LIUVacuumEnvironment.ACTION_SUCK;
-	    }
-	    else
-	    {
-	    	if (bump)
-	    	{
-	    		state.agent_last_action=state.ACTION_NONE;
-		    	return NoOpAction.NO_OP;
-	    	}
-	    	else
-	    	{
-	    		state.agent_last_action=state.ACTION_MOVE_FORWARD;
-	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-	    	}
-	    }*/
-
-
+		return searchAndSuck(bump, dirt, home);
 	}
 }
 
