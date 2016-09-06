@@ -89,6 +89,13 @@ class MyAgentState
 	public int goal_x = -1;
 	public int goal_y = -1;
 
+  public int maxX = 0;
+  public int maxY = 0;
+  public int maxX_counter = 0;
+  public int maxY_counter = 0;
+  public int wall_x = 29;
+  public int wall_y = 29;
+
 	MyAgentState()
 	{
 		for (int i=0; i < world.length; i++)
@@ -133,15 +140,15 @@ class MyAgentState
 			for (int j=0; j < world[i].length ; j++)
 			{
 				if (world[j][i]==UNKNOWN)
-					System.out.print(" ! ");
-				if (world[j][i]==WALL)
-					System.out.print(" # ");
-				if (world[j][i]==CLEAR)
 					System.out.print(" . ");
+				if (world[j][i]==WALL)
+					System.out.print(" | ");
+				if (world[j][i]==CLEAR)
+					System.out.print("   ");
 				if (world[j][i]==DIRT)
 					System.out.print(" D ");
 				if (world[j][i]==HOME)
-					System.out.print(" H ");
+					System.out.print(" ! ");
 			}
 			System.out.println("");
 		}
@@ -150,12 +157,11 @@ class MyAgentState
 
 class MyAgentProgram implements AgentProgram {
 
-	//private int initnialRandomActions = 10;
-  private int initnialRandomActions = 0;
+	private int initnialRandomActions = 0;
 	private Random random_generator = new Random();
 
 	// Here you can define your variables!
-	public int iterationCounter = 10;
+	public int iterationCounter = 15*15*2;
 	public MyAgentState state = new MyAgentState();
 
 	// moves the Agent to a random start position
@@ -314,19 +320,16 @@ class MyAgentProgram implements AgentProgram {
   }
 
 	public Boolean BFSNode(int old_x,int old_y,int x,int y){
-		if(x < 1 || x >= 29 || y < 1 || y >= 29){
+		if(x < 1 || x > state.wall_x || y < 1 || y > state.wall_y){
 			return false;
 		}
 
     int c = state.nodeWorld[old_x][old_y].getDistance();
 
 		if(state.nodeWorld[x][y].getDistance() == -1){
-			// TODO overkilla med direction som kostnad
 			if(state.world[x][y] != state.WALL){
-
 				state.nodeWorld[x][y].setDistance(c + 1);
 				state.nodeWorld[x][y].setParent(old_x,old_y);
-
         if(state.world[x][y] == state.UNKNOWN){
           return true;
         }
@@ -355,55 +358,40 @@ class MyAgentProgram implements AgentProgram {
 			x = current.getX();
 			y = current.getY();
 
-      //(1,0)
-      //(-1,0)
-      //(0,1)
-      //(0,-1)
-
       int[][] order = new int[4][2];
       if (state.agent_direction == state.EAST){
         order[0][0] = 1;
         order[0][1] = 0;
-
         order[3][0] = -1;
         order[3][1] = 0;
       }
-
       else if(state.agent_direction == state.WEST){
         order[0][0] = -1;
         order[0][1] = 0;
-
         order[3][0] = 1;
         order[3][1] = 0;
       }
       else if (state.agent_direction == state.NORTH){
         order[0][0] = 0;
         order[0][1] = -1;
-
         order[3][0] = 0;
         order[3][1] = 1;
       }
-
       else if(state.agent_direction == state.SOUTH){
         order[0][0] = 0;
         order[0][1] = 1;
-
         order[3][0] = 0;
         order[3][1] = -1;
       }
-      // ===============================================
-
       if(state.agent_direction == state.EAST || state.agent_direction == state.WEST){
         order[1][0] = 0;
         order[1][1] = 1;
-
         order[2][0] = 0;
         order[2][1] = -1;
       }
       else if(state.agent_direction == state.NORTH || state.agent_direction == state.SOUTH){
         order[1][0] = 1;
         order[1][1] = 0;
-
         order[2][0] = -1;
         order[2][1] = 0;
       }
@@ -432,6 +420,27 @@ class MyAgentProgram implements AgentProgram {
       return LIUVacuumEnvironment.ACTION_SUCK;
     }
 		if(bump){
+      if(state.agent_x_position > state.maxX){
+        state.maxX = state.agent_x_position;
+        state.maxX_counter = 0;
+      }
+      else if(state.agent_x_position == state.maxX){
+        if(state.maxX_counter == 4){
+          state.wall_x = state.agent_x_position;
+        }
+        state.maxX_counter++;
+      }
+      if(state.agent_y_position > state.maxY){
+        state.maxY = state.agent_y_position;
+        state.maxY_counter = 0;
+      }
+      else if(state.agent_y_position == state.maxY){
+        if(state.maxY_counter == 4){
+          state.wall_y = state.agent_y_position;
+        }
+        state.maxY_counter++;
+      }
+
 			findUnexplored();
 		}
 
@@ -441,7 +450,6 @@ class MyAgentProgram implements AgentProgram {
 
 	@Override
 	public Action execute(Percept percept) {
-
 
 		// DO NOT REMOVE this if condition!!!
   	if (initnialRandomActions>0) {
@@ -456,12 +464,7 @@ class MyAgentProgram implements AgentProgram {
     	return LIUVacuumEnvironment.ACTION_SUCK;
   	}
 
-  	// This example agent program will update the internal agent state while only moving forward.
-  	// START HERE - code below should be modified!
-
-
     //iterationCounter--;
-
     if (iterationCounter==0)
     	return NoOpAction.NO_OP;
 
@@ -496,12 +499,6 @@ class MyAgentProgram implements AgentProgram {
     else{
     	state.updateWorld(state.agent_x_position,state.agent_y_position,state.CLEAR);
 		}
-
-	  // Next action selection based on the percept value
-		System.out.println("==========================================================");
-		System.out.println("x=" + state.agent_x_position);
-		System.out.println("y=" + state.agent_y_position);
-		System.out.println("dir=" + state.agent_direction);
 
 		state.printWorldDebug();
 
