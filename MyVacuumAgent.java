@@ -56,25 +56,13 @@ class Node {
 	public int getY(){
 		return this.y;
 	}
-
-  @Override public String toString() {
-    String res;
-    res = "Node: { \n";
-    res += "  X: " + this.x + "\n";
-    res += "  Y: " + this.y + "\n";
-    res += "  P_X: " + this.parent_x + "\n";
-    res += "  P_Y: " + this.parent_y + "\n";
-    res += "  d: " + this.distance + "\n";
-    res += "}\n";
-    return res;
-  }
 }
 
 class MyAgentState
 {
 	public int[][] world = new int[30][30];
-	Node[][] nodeWorld = new Node[30][30];
-	Queue<Node> qNodes = new LinkedList<Node>();
+	public Node[][] nodeWorld = new Node[30][30];
+	public Queue<Node> qNodes = new LinkedList<Node>();
 
 	final int UNKNOWN 	= 0;
 	final int WALL 		= 1;
@@ -97,6 +85,7 @@ class MyAgentState
 	public static final int WEST = 3;
 	public int agent_direction = EAST;
 
+  public Boolean mapDone = false;
 	public int goal_x = -1;
 	public int goal_y = -1;
 
@@ -144,11 +133,11 @@ class MyAgentState
 			for (int j=0; j < world[i].length ; j++)
 			{
 				if (world[j][i]==UNKNOWN)
-					System.out.print(" ? ");
+					System.out.print(" ! ");
 				if (world[j][i]==WALL)
 					System.out.print(" # ");
 				if (world[j][i]==CLEAR)
-					System.out.print(" c ");
+					System.out.print(" . ");
 				if (world[j][i]==DIRT)
 					System.out.print(" D ");
 				if (world[j][i]==HOME)
@@ -161,7 +150,8 @@ class MyAgentState
 
 class MyAgentProgram implements AgentProgram {
 
-	private int initnialRandomActions = 10;
+	//private int initnialRandomActions = 10;
+  private int initnialRandomActions = 0;
 	private Random random_generator = new Random();
 
 	// Here you can define your variables!
@@ -195,7 +185,6 @@ class MyAgentProgram implements AgentProgram {
 	}
 
 	public void updateDirection(int direction){
-		System.out.println("DIR: " + state.agent_direction);
 		if(direction == 2){
 			state.agent_direction = (state.agent_direction + 1) % 4;
 		}
@@ -206,7 +195,6 @@ class MyAgentProgram implements AgentProgram {
 				state.agent_direction += 4;
 			}
 		}
-		System.out.println("DIR: " + state.agent_direction);
 	}
 
 	public Action goTo(int x, int y){
@@ -217,9 +205,16 @@ class MyAgentProgram implements AgentProgram {
 				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 			}
 			else {
-				updateDirection(state.ACTION_TURN_LEFT);
-				state.agent_last_action = state.ACTION_TURN_LEFT;
-				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+        if(state.agent_direction == state.SOUTH){
+          updateDirection(state.ACTION_TURN_RIGHT);
+  				state.agent_last_action = state.ACTION_TURN_RIGHT;
+  				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+        }
+        else {
+          updateDirection(state.ACTION_TURN_LEFT);
+  				state.agent_last_action = state.ACTION_TURN_LEFT;
+  				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+        }
 			}
 		}
 		// to much south
@@ -228,11 +223,17 @@ class MyAgentProgram implements AgentProgram {
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 			}
-			else {
-				updateDirection(state.ACTION_TURN_LEFT);
-				state.agent_last_action = state.ACTION_TURN_LEFT;
-				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-
+      else {
+        if(state.agent_direction == state.WEST){
+          updateDirection(state.ACTION_TURN_RIGHT);
+  				state.agent_last_action = state.ACTION_TURN_RIGHT;
+  				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+        }
+        else {
+          updateDirection(state.ACTION_TURN_LEFT);
+  				state.agent_last_action = state.ACTION_TURN_LEFT;
+  				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+        }
 			}
 		}
 		// to much west
@@ -241,11 +242,17 @@ class MyAgentProgram implements AgentProgram {
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 			}
-			else {
-				updateDirection(state.ACTION_TURN_LEFT);
-				state.agent_last_action = state.ACTION_TURN_LEFT;
-				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-
+      else {
+        if(state.agent_direction == state.NORTH){
+          updateDirection(state.ACTION_TURN_RIGHT);
+  				state.agent_last_action = state.ACTION_TURN_RIGHT;
+  				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+        }
+        else {
+          updateDirection(state.ACTION_TURN_LEFT);
+  				state.agent_last_action = state.ACTION_TURN_LEFT;
+  				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+        }
 			}
 		}
 		// to much north
@@ -255,11 +262,17 @@ class MyAgentProgram implements AgentProgram {
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 			}
-			else {
-				updateDirection(state.ACTION_TURN_LEFT);
-				state.agent_last_action = state.ACTION_TURN_LEFT;
-				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-
+      else {
+        if(state.agent_direction == state.EAST){
+          updateDirection(state.ACTION_TURN_RIGHT);
+  				state.agent_last_action = state.ACTION_TURN_RIGHT;
+  				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+        }
+        else {
+          updateDirection(state.ACTION_TURN_LEFT);
+  				state.agent_last_action = state.ACTION_TURN_LEFT;
+  				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+        }
 			}
 		}
 	}
@@ -272,37 +285,25 @@ class MyAgentProgram implements AgentProgram {
     int G_Y = state.goal_y;
 
     if(G_X == H_X && G_Y == H_Y){
+      if(state.mapDone){
+        return NoOpAction.NO_OP;
+      }
       findUnexplored();
       G_X = state.goal_x;
       G_Y = state.goal_y;
     }
 
-    System.out.println("H_X: " + state.agent_x_position + " H_Y: " + state.agent_y_position);
-    System.out.println("G_X: " + G_X + " G_Y: " + G_Y);
-    System.out.println("P_X: " + state.nodeWorld[G_X][G_Y].getParent_x());
-    System.out.println("P_Y: " + state.nodeWorld[G_X][G_Y].getParent_y());
-
-
     int P_X = state.nodeWorld[G_X][G_Y].getParent_x();
     int P_Y = state.nodeWorld[G_X][G_Y].getParent_y();
-
-    System.out.println(state.nodeWorld[G_X][G_Y].toString());
 
     int Prev_P_X = G_X;
     int Prev_P_Y = G_Y;
 
     while(true){
       // loopa tills vi har en nod precis bredvid. gå till den.
-
-      System.out.println("Prev_P_X: " + Prev_P_X);
-      System.out.println("Prev_P_Y: " + Prev_P_Y);
-
       if(P_X == H_X && P_Y == H_Y){
         return goTo(Prev_P_X,Prev_P_Y);
       }
-
-      System.out.println(P_X + " JDJJ " + P_Y);
-      System.out.println(state.nodeWorld[P_X][P_Y].toString());
 
       Prev_P_X = P_X;
       Prev_P_Y = P_Y;
@@ -318,7 +319,6 @@ class MyAgentProgram implements AgentProgram {
 		}
 
     int c = state.nodeWorld[old_x][old_y].getDistance();
-    System.out.println("COST IS: " + c);
 
 		if(state.nodeWorld[x][y].getDistance() == -1){
 			// TODO overkilla med direction som kostnad
@@ -328,8 +328,6 @@ class MyAgentProgram implements AgentProgram {
 				state.nodeWorld[x][y].setParent(old_x,old_y);
 
         if(state.world[x][y] == state.UNKNOWN){
-          // go to this little sucker
-          System.out.println("come here: " + x + " : " + y);
           return true;
         }
 				state.qNodes.add(state.nodeWorld[x][y]);
@@ -339,13 +337,11 @@ class MyAgentProgram implements AgentProgram {
 	}
 
 	public void findUnexplored(){
-
 		for(int i = 0; i < 30; i++){
 			for(int j = 0; j < 30; j++){
 				state.nodeWorld[i][j] = new Node(i,j);
 			}
 		}
-
     state.qNodes.clear();
 
 		state.nodeWorld[state.agent_x_position][state.agent_y_position].setDistance(0);
@@ -359,27 +355,70 @@ class MyAgentProgram implements AgentProgram {
 			x = current.getX();
 			y = current.getY();
 
-			if(BFSNode(x,y,x+1,y)){
-        state.goal_x = x + 1;
-        state.goal_y = y;
-        break;
+      //(1,0)
+      //(-1,0)
+      //(0,1)
+      //(0,-1)
+
+      int[][] order = new int[4][2];
+      if (state.agent_direction == state.EAST){
+        order[0][0] = 1;
+        order[0][1] = 0;
+
+        order[3][0] = -1;
+        order[3][1] = 0;
       }
-			if(BFSNode(x,y,x-1,y)){
-        state.goal_x = x - 1;
-        state.goal_y = y;
-        break;
+
+      else if(state.agent_direction == state.WEST){
+        order[0][0] = -1;
+        order[0][1] = 0;
+
+        order[3][0] = 1;
+        order[3][1] = 0;
       }
-      if(BFSNode(x,y,x,y+1)){
-        state.goal_x = x;
-        state.goal_y = y + 1;
-        break;
+      else if (state.agent_direction == state.NORTH){
+        order[0][0] = 0;
+        order[0][1] = -1;
+
+        order[3][0] = 0;
+        order[3][1] = 1;
       }
-      if(BFSNode(x,y,x,y-1)){
-        state.goal_x = x;
-        state.goal_y = y - 1;
-        break;
+
+      else if(state.agent_direction == state.SOUTH){
+        order[0][0] = 0;
+        order[0][1] = 1;
+
+        order[3][0] = 0;
+        order[3][1] = -1;
+      }
+      // ===============================================
+
+      if(state.agent_direction == state.EAST || state.agent_direction == state.WEST){
+        order[1][0] = 0;
+        order[1][1] = 1;
+
+        order[2][0] = 0;
+        order[2][1] = -1;
+      }
+      else if(state.agent_direction == state.NORTH || state.agent_direction == state.SOUTH){
+        order[1][0] = 1;
+        order[1][1] = 0;
+
+        order[2][0] = -1;
+        order[2][1] = 0;
+      }
+
+      for(int i = 0 ; i < 4; i++){
+        if(BFSNode(x,y,x + order[i][0],y + order[i][1])){
+          state.goal_x = x + order[i][0];
+          state.goal_y = y + order[i][1];
+          return;
+        }
       }
 		}
+    state.goal_x = 1;
+    state.goal_y = 1;
+    state.mapDone = true;
     return;
 	}
 
@@ -394,19 +433,10 @@ class MyAgentProgram implements AgentProgram {
     }
 		if(bump){
 			findUnexplored();
-
-      for(int i = 0 ; i < 7; i++){
-  			for(int j = 0 ; j < 7; j++){
-  				System.out.print(" " + state.nodeWorld[j][i].distance + " ");
-  			}
-  			System.out.println("");
-  		}
 		}
 
     Action next = goToImproved();
-    System.out.println("NEXT: " + next);
     return next;
-
 	}
 
 	@Override
