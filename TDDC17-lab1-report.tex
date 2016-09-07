@@ -28,6 +28,7 @@
     \textbf{Lab1 report}
 \end{center}
 
+\section{Our Agent}
 Our agent works the same in both Task1 and Task2.
 The main concept is to search for an unknown position with breadth first search, go there and repeat until done.
 
@@ -46,6 +47,7 @@ The class Node contains of the following parameters:
 	\item \textit{parent\_x/\_y} - the x/y-position for the parent Node
 \end{itemize}
 
+\section{Main loop}
 The main decision loop consists of the following steps:
 \begin{itemize}
 	\item If we don't have a goal position, use BFS - Breadth First Search to find an close \textit{unknown} position and set that to the goal position. Go towards that position
@@ -54,6 +56,7 @@ The main decision loop consists of the following steps:
 	\item If there is no more \textit{unknown} positions, go back home and power off
 \end{itemize}
 
+\section{Design}
 We chose BFS because it is easy to implement the algorithm and it is good enough for finding a close position. Oftentimes the desired position is just a few steps away.
 
 First we thought that sweeping through the room was a good idea. Then we thought about obstacles and realized that it needed to be a lot of cases to go round an obstacle, we changed our minds and instead implemented BFS.
@@ -61,6 +64,10 @@ First we thought that sweeping through the room was a good idea. Then we thought
 Some optimizations that are implemented is to prefer to go in the direction ahead of the robot. That is done because rotation is so expensive and we save a lot of actions to do that little trick.
 
 Another is if we bump in to 4 walls either south or east, that will be our new limit for searching. So we will not bump into all the walls to check if there is walls there.
+
+\section{Possible improvements}
+An improvement that could be made but have not is to totally consider the direction we are facing in our BFS-algorithm, as of now we don’t consider it at all when moving more than one tile.
+Another improvement could be to change priorities in our decision-making, for example we could do some more calculations when we have parts of the map in memory.
 
 If we would do the lab again, we would begin with the search algorithm to save time.
 
