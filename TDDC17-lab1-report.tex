@@ -1,0 +1,67 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{datetime2}
+\usepackage{parskip}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\lhead{eriro331, micso554}
+\rhead{\today} % yyyy-mm-dd
+\setlength{\headheight}{15pt}
+
+\cfoot{\thepage}
+
+\begin{document}
+
+\begin{center}
+    \Huge
+    \textbf{TDDC17 - AI}
+
+    \vspace{0.3cm}
+    \Large
+    Erik Rönmark
+    Michael Sörsäter
+    
+    \vspace{0.7cm}
+    \textbf{Lab1 report}
+\end{center}
+
+Our agent works the same in both Task1 and Task2.
+The main concept is to search for an unknown position with breadth first search, go there and repeat until done.
+
+The class MyAgentState has mainly the following fields added to it:
+\begin{itemize}
+	\item \textit{nodeWorld}, a 30x30 array that contains our own class Node (described below)
+	\item \textit{qNodes}, a queue used for storing nodes during the breadth first search
+	\item \textit{mapDone}, a Boolean used for knowing when map is done
+	\item some parameters to keep track of if we find a wall, to optimize the search
+\end{itemize}
+
+The class Node contains of the following parameters:
+\begin{itemize}
+	\item \textit{distance} - the cost for the Node
+	\item \textit{x/y} - the x/y-position for the Node
+	\item \textit{parent\_x/\_y} - the x/y-position for the parent Node
+\end{itemize}
+
+The main decision loop consists of the following steps:
+\begin{itemize}
+	\item If we don't have a goal position, use BFS - Breadth First Search to find an close \textit{unknown} position and set that to the goal position. Go towards that position
+	\item If there is dirt on the way, remove it
+	\item If we bump, recalculate to new position with BFS to compensate for walls
+	\item If there is no more \textit{unknown} positions, go back home and power off
+\end{itemize}
+
+We chose BFS because it is easy to implement the algorithm and it is good enough for finding a close position. Oftentimes the desired position is just a few steps away.
+
+First we thought that sweeping through the room was a good idea. Then we thought about obstacles and realized that it needed to be a lot of cases to go round an obstacle, we changed our minds and instead implemented BFS.
+
+Some optimizations that are implemented is to prefer to go in the direction ahead of the robot. That is done because rotation is so expensive and we save a lot of actions to do that little trick.
+
+Another is if we bump in to 4 walls either south or east, that will be our new limit for searching. So we will not bump into all the walls to check if there is walls there.
+
+If we would do the lab again, we would begin with the search algorithm to save time.
+
+\end{document}
