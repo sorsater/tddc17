@@ -116,6 +116,10 @@ The order for Djikstras: \\
 
 BFS, DFS, A*, Djikstra
 
+Breadth First search is complete since it is guaranteed to find the goal if it exists, it is also optimal for unit step costs, otherwise it will return the shortest path (in steps) but not neccesary in cost.
+
+Depth First search is not complete when applied to infinite graphs, since it can get lost in a part without a goalstate. Otherwise it is complete. It is however not optimal, as it may ignore cheaper paths if it reaches the goal early.
+
 \textbf{7. Assume that you had to go back and do Lab 1/Task 2 once more (if you did not use search already). Remember that the agent did not have perfect knowledge of the environment but had to explore it incrementally. Which of the search algorithms you have learned would be most suited in this situation to guide the agent's execution? What would you search for? Give an example.}
 
 We chose to use Breadth First Search. It's a good algorithm because it quickly finds an unknown node. To use A* would be better because BFS doesn't take into account that rotation have a cost.
