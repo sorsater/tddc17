@@ -1,10 +1,11 @@
 \documentclass[12pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
-%\usepackage{datetime2}
+\usepackage{datetime2}
 \usepackage{parskip}
 \usepackage{lipsum}
 \usepackage{graphicx}
+\usepackage{float}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -18,16 +19,16 @@
 \begin{document}
 
 \begin{center}
-    \Huge
-    \textbf{TDDC17 - AI}
+	\Huge
+	\textbf{TDDC17 - AI}
 
-    \vspace{0.3cm}
-    \Large
-    Erik Rönmark
-    Michael Sörsäter
-    
-    \vspace{0.7cm}
-    \textbf{Lab2 report}
+	\vspace{0.3cm}
+	\Large
+	Erik Rönmark
+	Michael Sörsäter
+	
+	\vspace{0.7cm}
+	\textbf{Lab2 report}
 \end{center}
 
 \textbf{1. In the vacuum cleaner domain in part 1, what were the states and actions? What is the branching factor?}
@@ -63,25 +64,60 @@ Yes, it's an admissible heuristic.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.9\textwidth]{graph}
-    \caption{The tree used in all examples}
+	\includegraphics[width=0.6\textwidth]{graph}
+	\caption{The tree used in all examples}
 \end{figure}
 
+All algorithms terminates when reaching the goal (F).
 
 The order for Breadth First Search: \\
-1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+\begin{table}[H]
+	\caption{Breadth First Search}
+	\makebox[\linewidth]{
+		\begin{tabular}{| l |  l | l | l | l | l | l |}
+			\hline
+			\textbf{Nod} & A & B & C & D & E & F \\
+			\hline
+			\textbf{Minne} & A & A,B & C & D & E & F \\
+			\hline
+		\end{tabular}
+	}
+\end{table}
 
 The order for Depth Fist Search: \\
-1, 2, 6, 14, 15, 7, 8, 3, 9, 16, 17, 10, 4, 11, 18, 19, 5, 12, 13, 20
+\begin{table}[H]
+	\caption{Depth First Search}
+	\makebox[\linewidth]{
+		\begin{tabular}{| l |  l | l | l | l | l | l |}
+			\hline
+			\textbf{Node} & A & B & D & E & H & F \\
+			\hline
+			\textbf{Memory} &  &  &  &  &  &  \\
+			\hline
+		\end{tabular}
+	}
+\end{table}
 
-The order for 
-
-
+The order for Djikstras: \\
+\begin{table}[H]
+	\caption{Djikstra's algorithm}
+	\makebox[\linewidth]{
+		\begin{tabular}{| l |  l | l | l | l | l | l |}
+			\hline
+			\textbf{Nod} & A & C & B & G & E & F \\
+			\hline
+			\textbf{Memory} &  &  &  &  &  &  \\
+			\hline
+		\end{tabular}
+	}
+\end{table}
 
 \textbf{6. Look at all the offline search algorithms presented in chapter 3 plus A* search. Are they complete? Are they optimal? Explain why!}
 
+BFS, DFS, A*, Djikstra
+
 \textbf{7. Assume that you had to go back and do Lab 1/Task 2 once more (if you did not use search already). Remember that the agent did not have perfect knowledge of the environment but had to explore it incrementally. Which of the search algorithms you have learned would be most suited in this situation to guide the agent's execution? What would you search for? Give an example.}
 
-
+We chose to use Breadth First Search. It's a good algorithm because it quickly finds an unknown node. To use A* would be better because BFS doesn't take into account that rotation have a cost.
 
 \end{document}
