@@ -1,0 +1,111 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+%\usepackage{datetime2}
+\usepackage{parskip}
+\usepackage{lipsum}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\lhead{eriro331, micso554}
+\rhead{\today} % yyyy-mm-dd
+\setlength{\headheight}{15pt}
+
+\cfoot{\thepage}
+
+\begin{document}
+
+\begin{center}
+    \Huge
+    \textbf{TDDC17 - AI}
+
+    \vspace{0.3cm}
+    \Large
+    Erik Rönmark
+    Michael Sörsäter
+    
+    \vspace{0.7cm}
+    \textbf{Lab3 report}
+\end{center}
+
+\section{Part 2}
+\subsection{Question 5}
+\textbf{What is the risk of melt-down in the power plant during a day if no observations have been made? What if there is icy weather?}
+
+The risk of meltdown is 2.578\% \\
+If there is icy weather the probability increases to 3.472\%
+
+\textbf{Suppose that both warning sensors indicate failure. What is the risk of a meltdown in that case? Compare this result with the risk of a melt-down when there is an actual pump failure and water leak. What is the difference? The answers must be expressed as conditional probabilities of the observed variables, P(Meltdown|...).}
+
+P(Meltdown $|$ (PumpFailureWarning = True, WaterLeakWarning = True)) = 14.535\% \\
+P(Meltdown $|$ (PumpFailure = True, WaterLeak = True)) = 20\%
+
+\textbf{The conditional probabilities for the stochastic variables are often estimated by repeated experiments or observations. Why is it sometimes very difficult to get accurate numbers for these? What conditional probabilites in the model of the plant do you think are difficult or impossible to estimate?}
+
+The problem with stochastic variables are that they change over time. E.g. IcyWeather is very hard to model because it can depend on things like season. 
+
+\textbf{Assume that the "IcyWeather" variable is changed to a more accurate "Temperature" variable instead (don't change your model). What are the different alternatives for the domain of this variable? What will happen with the probability distribution of P(WaterLeak $|$ Temperature) in each alternative?}
+
+True and False is a bad representation of temperature. A better example would be to use ranges. E.g. 0-5,5-10,... The probability distribution of P(WaterLeak $|$ Temperature) will vary depending of the observed range. More narrow ranges will lead to a more accurate model.
+
+\subsection{Question 6}
+\textbf{What does a probability table in a Bayesian network represent?}
+
+For each possible combination of the parents probabilities, shows the probability for the different domains. 
+
+\textbf{What is a joint probability distribution? Using the chain rule on the structure of the Bayesian network to rewrite the joint distribution as a product of P(child|parent) expressions, calculate manually the particular entry in the joint distribution of P(Meltdown=F, PumpFailureWarning=F, PumpFailure=F, WaterLeakWaring=F, WaterLeak=F, IcyWeather=F). Is this a common state for the nuclear plant to be in?}
+
+asdfasdf
+
+\textbf{What is the probability of a meltdown if you know that there is both a water leak and a pump failure? Would knowing the state of any other variable matter? Explain your reasoning!}
+
+asdfasd
+
+\textbf{Calculate manually the probability of a meltdown when you happen to know that PumpFailureWarning=F, WaterLeak=F, WaterLeakWarning=F and IcyWeather=F but you are not really sure about a pump failure.}
+
+asdfasdf
+
+    Hint: Use the Exact Inference formula near the end of the slides, or in sec. 14.4.1 in the book. This formula includes both conditioning on the variables you know (evidence) and marginalizing (summing) over the variable(s) you do not know (often called unobserved or hidden). You need to calculate this both for P(Meltdown=T|...) and P(Meltdown=F|..) and normalize them so that they sum to 1. This normalization factor is the alpha symbol in the equation. With this formula you could answer any query in the network, though it will be impractical for cases with many unobserved variables. A suggestion is to move the terms that do not involve the pump failure variable out of the sum over the two states pump failure can be in (T/F). You may use inference in the applet for verification purposes, but small differences is expected due to rounding errors. 
+    hej\_jj
+
+\section {Part 3}
+\subsection{Question 2}
+\textbf{During the lunch break, the owner tries to show off for his employees by demonstrating the many features of his car stereo. To everyone's disappointment, it doesn't work. How did the owner's chances of surviving the day change after this observation?}
+
+asödlkfjaösdlkjflöakjsdf
+
+\textbf{The owner buys a new bicycle that he brings to work every day. The bicycle has the following properties: \\
+\begin{itemize}
+\item P(bicycle$\_$works) = 0.9 \\
+\item P(survives $|$ $\lnot$moves $\land$ melt-down $\land$ bicycle$\_$works) = 0.6 \\
+\item P(survives $|$ moves $\land$ melt-down $\land$ bicycle$\_$works) = 0.9  \\
+\end{itemize}
+How does the bicycle change the owner's chances of survival?}
+    
+asdfasdf
+
+\textbf{It is possible to model any function in propositional logic with Bayesian Networks. What does this fact say about the complexity of exact inference in Bayesian Networks? What alternatives are there to exact inference?}
+
+jöasdklfjaölkdsfj
+
+\section {Part 4}
+\subsection{Question 2}
+\textbf{The owner had an idea that instead of employing a safety person, to replace the pump with a better one. Is it possible, in your model, to compensate for the lack of Mr H.S.'s expertise with a better pump?}
+
+\textbf{Mr H.S. fell asleep on one of the plant's couches. When he wakes up he hears someone scream: "There is one or more warning signals beeping in your control room!". Mr H.S. realizes that he does not have time to fix the error before it is to late (we can assume that he wasn't in the control room at all). What is the chance of survival for Mr H.S. if he has a car with the same properties as the owner?}
+
+Hint: This question involves a disjunction (A or B) which can not be answered by querying the network as is. How could you answer such questions? Maybe something could be added or modified in the network.
+
+\textbf{What unrealistic assumptions do you make when creating a Bayesian Network model of a person?}
+
+asdfasdf
+
+\textbf{Describe how you would model a more dynamic world where for example the "IcyWeather" is more likely to be true the next day if it was true the day before. You only have to consider a limited sequence of days.}
+
+asdfasdfasf
+
+
+
+
+\end{document}
