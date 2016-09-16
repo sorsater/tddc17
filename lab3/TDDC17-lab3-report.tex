@@ -54,22 +54,35 @@ True and False is a bad representation of temperature. A better example would be
 
 For each possible combination of the parents probabilities, shows the probability for the different domains. 
 
-\textbf{What is a joint probability distribution? Using the chain rule on the structure of the Bayesian network to rewrite the joint distribution as a product of P(child|parent) expressions, calculate manually the particular entry in the joint distribution of P(Meltdown=F, PumpFailureWarning=F, PumpFailure=F, WaterLeakWaring=F, WaterLeak=F, IcyWeather=F). Is this a common state for the nuclear plant to be in?}
+\textbf{What is a joint probability distribution? Using the chain rule on the structure of the Bayesian network to rewrite the joint distribution as a product of P(child $|$ parent) expressions, calculate manually the particular entry in the joint distribution of P(Meltdown=F, PumpFailureWarning=F, PumpFailure=F, WaterLeakWaring=F, WaterLeak=F, IcyWeather=F). Is this a common state for the nuclear plant to be in?}
 
-A joint probability distribution is 
-P($\lnot$Meltdown, $\lnot$PumpFailureWarning, $\lnot$PumpFailure, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) = 
+It is a probability based on multible variables. 
+
+P($\lnot$Meltdown, $\lnot$PumpFailureWarning, $\lnot$PumpFailure, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) = \\ P($\lnot$Meltdown $|$ $\lnot$PumpFailureWarning, $\lnot$PumpFailure, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$PumpFailureWarning $|$ $\lnot$PumpFailure, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$PumpFailure $|$ $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$WaterLeakWaring $|$ $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ 
+P($\lnot$WaterLeak $|$ $\lnot$IcyWeather) $*$ \\ P($\lnot$IcyWeather) $=$ \\ 
+$0.999 * 0.95 * 0.9 * 0.95 * 0.9 * 0.95 \approx 69.4\%$
+
 Yes it is a common state to be in.
 
 \textbf{What is the probability of a meltdown if you know that there is both a water leak and a pump failure? Would knowing the state of any other variable matter? Explain your reasoning!}
 
-asdfasd
+The probability is 20\%. No other variables matter since the warnings have no link to Meltdown and IcyWeather only affects Waterleak, but Waterleak is already observed as true. 
 
 \textbf{Calculate manually the probability of a meltdown when you happen to know that PumpFailureWarning=F, WaterLeak=F, WaterLeakWarning=F and IcyWeather=F but you are not really sure about a pump failure.}
 
-asdfasdf
+P(Meltdown $|$ $\lnot$PumpFailureWarning, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, \\ $\lnot$IcyWeather) = \\
+$\alpha *$ P(Meltdown, $\lnot$PumpFailureWarning, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) = \\
+$\alpha *$ P(Meltdown $|$ $\lnot$PumpFailureWarning, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$PumpFailureWarning $|$ $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$WaterLeakWaring $|$ $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$WaterLeak $|$ $\lnot$IcyWeather) $*$ \\ P($\lnot$IcyWeather) = \\ 
 
-    Hint: Use the Exact Inference formula near the end of the slides, or in sec. 14.4.1 in the book. This formula includes both conditioning on the variables you know (evidence) and marginalizing (summing) over the variable(s) you do not know (often called unobserved or hidden). You need to calculate this both for P(Meltdown=T|...) and P(Meltdown=F|..) and normalize them so that they sum to 1. This normalization factor is the alpha symbol in the equation. With this formula you could answer any query in the network, though it will be impractical for cases with many unobserved variables. A suggestion is to move the terms that do not involve the pump failure variable out of the sum over the two states pump failure can be in (T/F). You may use inference in the applet for verification purposes, but small differences is expected due to rounding errors. 
-    hej\_jj
+$\alpha = \frac{1}{(0.865 * 0.95 * 0.9 * 0.95)} \approx 1.42329$
+
+P(Meltdown $|$ ...) = $\alpha * 0.00272 * 0.865 * 0.95 * 0.9 * 0.95 = \alpha * 0.0019110618 \approx 0.00272$
+
+P($\lnot$Meltdown $|$ ...) = $\alpha * 0.99728 * 0.865 * 0.95 * 0.9 * 0.95 = \alpha * 0.7006851882 \approx 0.99728$ 
+
+Control: $0.00272 + 0.99728 = 1$ %that shit is lit
+
+The probability for a meltdown is 0.272\%
 
 \section {Part 3}
 \subsection{Question 2}
