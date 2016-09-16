@@ -88,7 +88,8 @@ The probability for a meltdown is 0.272\%
 \subsection{Question 2}
 \textbf{During the lunch break, the owner tries to show off for his employees by demonstrating the many features of his car stereo. To everyone's disappointment, it doesn't work. How did the owner's chances of surviving the day change after this observation?}
 
-asödlkfjaösdlkjflöakjsdf
+Before P(Survives) = 0.99001 \\
+After P(Survives) = 0.98116
 
 \textbf{The owner buys a new bicycle that he brings to work every day. The bicycle has the following properties: \\
 \begin{itemize}
@@ -98,29 +99,47 @@ asödlkfjaösdlkjflöakjsdf
 \end{itemize}
 How does the bicycle change the owner's chances of survival?}
     
-asdfasdf
+Before P(Survives) = 0.99001 \\
+After P(Survives) = 0.99505
 
 \textbf{It is possible to model any function in propositional logic with Bayesian Networks. What does this fact say about the complexity of exact inference in Bayesian Networks? What alternatives are there to exact inference?}
 
-jöasdklfjaölkdsfj
+Yes it is possible. However, the complexity grows exponentially in worst case. The alternative is approximative inference.
 
 \section {Part 4}
 \subsection{Question 2}
 \textbf{The owner had an idea that instead of employing a safety person, to replace the pump with a better one. Is it possible, in your model, to compensate for the lack of Mr H.S.'s expertise with a better pump?}
 
+ANSWER 1 \\
+Yes it is possible in our model, if the pump is replaced by a better one, then the chance of PumpFailure will decrease, which in turn decreases the chance of PumpFailureWarning. PumpfailureWarning decreases the chance of mr H.S to prevent Meltdown.
+
+% eller?
+% ersätt Homer med en bättre pump ist
+
+ANSWER 2 \\
+In our model, if the new pump have the probability of failure set to 2\% or less it is better to replace the pump than employing Mr H.S.
+
+HS:
+P(Survives) = 0.99706
+
+Better Pump (2\% failure):
+P(Survives) = 0.99725
+
+
 \textbf{Mr H.S. fell asleep on one of the plant's couches. When he wakes up he hears someone scream: "There is one or more warning signals beeping in your control room!". Mr H.S. realizes that he does not have time to fix the error before it is to late (we can assume that he wasn't in the control room at all). What is the chance of survival for Mr H.S. if he has a car with the same properties as the owner?}
+p(A u B u AB)
+a u b = a + b - a n b
+
 
 Hint: This question involves a disjunction (A or B) which can not be answered by querying the network as is. How could you answer such questions? Maybe something could be added or modified in the network.
 
 \textbf{What unrealistic assumptions do you make when creating a Bayesian Network model of a person?}
 
-asdfasdf
+Our model of a person have so few variables, to accurate model a person you need a lot of variables. Humans are random. (fjfjfjjfj)
+% https://www.youtube.com/watch?v=GJY8jJkDoMY
 
 \textbf{Describe how you would model a more dynamic world where for example the "IcyWeather" is more likely to be true the next day if it was true the day before. You only have to consider a limited sequence of days.}
 
-asdfasdfasf
-
-
-
+Markov chains using states with transition depending on previous states.
 
 \end{document}
