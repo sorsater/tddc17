@@ -1,7 +1,7 @@
 \documentclass[12pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
-%\usepackage{datetime2}
+\usepackage{datetime2}
 \usepackage{parskip}
 \usepackage{lipsum}
 
@@ -24,7 +24,7 @@
     \Large
     Erik Rönmark
     Michael Sörsäter
-    
+
     \vspace{0.7cm}
     \textbf{Lab3 report}
 \end{center}
@@ -43,7 +43,7 @@ P(Meltdown $|$ (PumpFailure, WaterLeak)) = 20\%
 
 \textbf{The conditional probabilities for the stochastic variables are often estimated by repeated experiments or observations. Why is it sometimes very difficult to get accurate numbers for these? What conditional probabilites in the model of the plant do you think are difficult or impossible to estimate?}
 
-The problem with stochastic variables are that they change over time. E.g. IcyWeather is very hard to model because it can depend on things like season. 
+The problem with stochastic variables are that they change over time. E.g. IcyWeather is very hard to model because it can depend on things like season.
 
 \textbf{Assume that the ``IcyWeather'' variable is changed to a more accurate ``Temperature'' variable instead (don't change your model). What are the different alternatives for the domain of this variable? What will happen with the probability distribution of P(WaterLeak $|$ Temperature) in each alternative?}
 
@@ -52,33 +52,33 @@ True and False is a bad representation of temperature. A better example would be
 \subsection{Question 6}
 \textbf{What does a probability table in a Bayesian network represent?}
 
-For each possible combination of the parents probabilities, shows the probability for the different domains. 
+For each possible combination of the parents probabilities, shows the probability for the different domains.
 
 \textbf{What is a joint probability distribution? Using the chain rule on the structure of the Bayesian network to rewrite the joint distribution as a product of P(child $|$ parent) expressions, calculate manually the particular entry in the joint distribution of P(Meltdown=F, PumpFailureWarning=F, PumpFailure=F, WaterLeakWaring=F, WaterLeak=F, IcyWeather=F). Is this a common state for the nuclear plant to be in?}
 
-It is a probability based on multible variables. 
+It is a probability based on multible variables.
 
-P($\lnot$Meltdown, $\lnot$PumpFailureWarning, $\lnot$PumpFailure, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) = \\ P($\lnot$Meltdown $|$ $\lnot$PumpFailureWarning, $\lnot$PumpFailure, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$PumpFailureWarning $|$ $\lnot$PumpFailure, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$PumpFailure $|$ $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$WaterLeakWaring $|$ $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ 
-P($\lnot$WaterLeak $|$ $\lnot$IcyWeather) $*$ \\ P($\lnot$IcyWeather) $=$ \\ 
+P($\lnot$Meltdown, $\lnot$PumpFailureWarning, $\lnot$PumpFailure, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) = \\ P($\lnot$Meltdown $|$ $\lnot$PumpFailureWarning, $\lnot$PumpFailure, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$PumpFailureWarning $|$ $\lnot$PumpFailure, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$PumpFailure $|$ $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$WaterLeakWaring $|$ $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\
+P($\lnot$WaterLeak $|$ $\lnot$IcyWeather) $*$ \\ P($\lnot$IcyWeather) $=$ \\
 $0.999 * 0.95 * 0.9 * 0.95 * 0.9 * 0.95 \approx 69.4\%$
 
 Yes it is a common state to be in.
 
 \textbf{What is the probability of a meltdown if you know that there is both a water leak and a pump failure? Would knowing the state of any other variable matter? Explain your reasoning!}
 
-The probability is 20\%. No other variables matter since the warnings have no link to Meltdown and IcyWeather only affects Waterleak, but Waterleak is already observed as true. 
+The probability is 20\%. No other variables matter since the warnings have no link to Meltdown and IcyWeather only affects Waterleak, but Waterleak is already observed as true.
 
 \textbf{Calculate manually the probability of a meltdown when you happen to know that PumpFailureWarning=F, WaterLeak=F, WaterLeakWarning=F and IcyWeather=F but you are not really sure about a pump failure.}
 
 P(Meltdown $|$ $\lnot$PumpFailureWarning, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, \\ $\lnot$IcyWeather) = \\
 $\alpha *$ P(Meltdown, $\lnot$PumpFailureWarning, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) = \\
-$\alpha *$ P(Meltdown $|$ $\lnot$PumpFailureWarning, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$PumpFailureWarning $|$ $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$WaterLeakWaring $|$ $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$WaterLeak $|$ $\lnot$IcyWeather) $*$ \\ P($\lnot$IcyWeather) = \\ 
+$\alpha *$ P(Meltdown $|$ $\lnot$PumpFailureWarning, $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$PumpFailureWarning $|$ $\lnot$WaterLeakWaring, $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$WaterLeakWaring $|$ $\lnot$WaterLeak, $\lnot$IcyWeather) $*$ \\ P($\lnot$WaterLeak $|$ $\lnot$IcyWeather) $*$ \\ P($\lnot$IcyWeather) = \\
 
 $\alpha = \frac{1}{(0.865 * 0.95 * 0.9 * 0.95)} \approx 1.42329$
 
 P(Meltdown $|$ ...) = $\alpha * 0.00272 * 0.865 * 0.95 * 0.9 * 0.95 = \alpha * 0.0019110618 \approx 0.00272$
 
-P($\lnot$Meltdown $|$ ...) = $\alpha * 0.99728 * 0.865 * 0.95 * 0.9 * 0.95 = \alpha * 0.7006851882 \approx 0.99728$ 
+P($\lnot$Meltdown $|$ ...) = $\alpha * 0.99728 * 0.865 * 0.95 * 0.9 * 0.95 = \alpha * 0.7006851882 \approx 0.99728$
 
 Control: $0.00272 + 0.99728 = 1$ %that shit is lit
 
@@ -98,7 +98,7 @@ After P(Survives) = 0.98116
 \item P(survives $|$ moves $\land$ melt-down $\land$ bicycle$\_$works) = 0.9  \\
 \end{itemize}
 How does the bicycle change the owner's chances of survival?}
-    
+
 Before P(Survives) = 0.99001 \\
 After P(Survives) = 0.99505
 
@@ -110,13 +110,6 @@ Yes it is possible. However, the complexity grows exponentially in worst case. T
 \subsection{Question 2}
 \textbf{The owner had an idea that instead of employing a safety person, to replace the pump with a better one. Is it possible, in your model, to compensate for the lack of Mr H.S.'s expertise with a better pump?}
 
-ANSWER 1 \\
-Yes it is possible in our model, if the pump is replaced by a better one, then the chance of PumpFailure will decrease, which in turn decreases the chance of PumpFailureWarning. PumpfailureWarning decreases the chance of mr H.S to prevent Meltdown.
-
-% eller?
-% ersätt Homer med en bättre pump ist
-
-ANSWER 2 \\
 In our model, if the new pump have the probability of failure set to 2\% or less it is better to replace the pump than employing Mr H.S.
 
 HS:
@@ -127,15 +120,13 @@ P(Survives) = 0.99725
 
 
 \textbf{Mr H.S. fell asleep on one of the plant's couches. When he wakes up he hears someone scream: "There is one or more warning signals beeping in your control room!". Mr H.S. realizes that he does not have time to fix the error before it is to late (we can assume that he wasn't in the control room at all). What is the chance of survival for Mr H.S. if he has a car with the same properties as the owner?}
-p(A u B u AB)
-a u b = a + b - a n b
 
-
-Hint: This question involves a disjunction (A or B) which can not be answered by querying the network as is. How could you answer such questions? Maybe something could be added or modified in the network.
+If there is one or more warnings the probability is: \\
+P(HS survives) = 0.6128\%
 
 \textbf{What unrealistic assumptions do you make when creating a Bayesian Network model of a person?}
 
-Our model of a person have so few variables, to accurate model a person you need a lot of variables. Humans are random. (fjfjfjjfj)
+Our model of a person have so few variables, to accurate model a person you need a lot of variables. Humans are random.
 % https://www.youtube.com/watch?v=GJY8jJkDoMY
 
 \textbf{Describe how you would model a more dynamic world where for example the "IcyWeather" is more likely to be true the next day if it was true the day before. You only have to consider a limited sequence of days.}
