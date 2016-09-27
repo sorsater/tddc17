@@ -2,30 +2,31 @@
   (:domain logistics)
   (:objects
    city1 city2 city3
-   truck1 truck2 truck3
-   airplane1
+   truck1 truck2 truck3 truck4 truck5 truck6
+   airplane1 airplane2 airplane3
    office1 office2 office3
    airport1 airport2 airport3
-   packet1 packet2 packet3 packet4
+   packet1
    drone1
    )
   (:init
    (object packet1)
-   (object packet2)
-   (object packet3)
-   (object packet4)
 
-   (small packet1) (small packet2)
-   (medium packet3)
-   (huge packet4)
-
+   (small packet1)
    (vehicle truck1)
    (vehicle truck2)
    (vehicle truck3)
-
+   (vehicle truck4)
+   (vehicle truck5)
+   (vehicle truck6)
    (vehicle airplane1)
+   (vehicle airplane2)
+   (vehicle airplane3)
    (truck truck1) (truck truck2) (truck truck3)
+   (truck truck4) (truck truck5) (truck truck6)
    (airplane airplane1)
+   (airplane airplane2)
+   (airplane airplane3)
    (vehicle drone1) (drone drone1)
 
    ;; likewise, airports must be declared both as "location" and as
@@ -57,16 +58,18 @@
    ;; The actual initial state of the problem, which specifies the
    ;; initial locations of all packages and all vehicles:
    (at packet1 office1)
-   (at packet2 office1)
-   (at packet3 office1)
-   (at packet4 office3)
 
    (at truck1 airport1)
    (at truck2 airport2)
    (at truck3 office3)
+   (at truck4 airport1)
+   (at truck5 airport3)
+   (at truck6 office3)
    (at airplane1 airport1)
+   (at airplane2 airport2)
+   (at airplane3 airport3)
    (at drone1 airport1)
    )
   ;; The goal is to have both packages delivered to their destinations:
-  (:goal (and (at packet1 office3) (at packet2 office2) (at packet3 office2) (at packet4 office2)));; (at packet4 office2) (at packet5 office2) (at packet6 office2) (at packet7 office2)))
+  (:goal (at packet1 office3));;
   )

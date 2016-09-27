@@ -6,7 +6,7 @@
    airplane1
    office1 office2 office3
    airport1 airport2 airport3
-   packet1 packet2 packet3 packet4
+   packet1 packet2 packet3 packet4 packet5
    drone1
    )
   (:init
@@ -14,11 +14,13 @@
    (object packet2)
    (object packet3)
    (object packet4)
+   (object packet5)
 
-   (small packet1) (small packet2)
-   (medium packet3)
-   (huge packet4)
-
+   (small packet1)
+   (small packet2)
+   (small packet3)
+   (small packet4)
+      (medium packet4)
    (vehicle truck1)
    (vehicle truck2)
    (vehicle truck3)
@@ -58,8 +60,9 @@
    ;; initial locations of all packages and all vehicles:
    (at packet1 office1)
    (at packet2 office1)
-   (at packet3 office1)
+   (at packet3 office2)
    (at packet4 office3)
+   (at packet5 office2)
 
    (at truck1 airport1)
    (at truck2 airport2)
@@ -68,5 +71,5 @@
    (at drone1 airport1)
    )
   ;; The goal is to have both packages delivered to their destinations:
-  (:goal (and (at packet1 office3) (at packet2 office2) (at packet3 office2) (at packet4 office2)));; (at packet4 office2) (at packet5 office2) (at packet6 office2) (at packet7 office2)))
+  (:goal (and (at packet1 office3) (at packet2 office2) (at packet3 office1) (at packet4 office1) (at packet5 office1)));;
   )

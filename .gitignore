@@ -5,3 +5,8 @@
 *.pdf
 *.fdb_latexmk
 *.synctex.gz
+sas_plan.*
+elapsed.time
+output
+output.sas
+plan_numbers_and_cost

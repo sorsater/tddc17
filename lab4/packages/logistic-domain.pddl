@@ -13,6 +13,7 @@
    (loc ?l ?c)
 
    ;; different package sizes
+   ;; all of them are supposed to be objects
    (object ?o)
    (small ?s)
    (medium ?m)
