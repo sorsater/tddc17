@@ -1,10 +1,26 @@
 public class StateAndReward {
 
-	
-	/* State discretization function for the angle controller */
+	public static int ANGLE_PRECISION = 10;
+	public static int ANGLE_SCALING_FACTOR = 7;
+	public static int ANGLE_MIN_VALUE = 0;
+	public static double ANGLE_MAX_VALUE = Math.PI;
+
+	public static int VY_PRECISION = 10;
+	public static int VY_SCALING_FACTOR = 10;
+	public static int VY_MIN_VALUE = 0;
+	public static int VY_MAX_VALUE = 5;
+
+	public static int VX_PRECISION = 3;
+	public static int VX_SCALING_FACTOR = 3; //2
+	public static int VX_MIN_VALUE = 0;
+	public static int VX_MAX_VALUE = 1; //2
+
+	// TODO 1 state för x
+	// skriv om kod för precision så den är fin.
+
 	public static String getStateAngle(double angle, double vx, double vy) {
 
-		String state = "OneStateToRuleThemAll";
+		String state = "";
 
 		int res = discretize(angle,31,-Math.PI,Math.PI);
 
@@ -27,7 +43,6 @@ public class StateAndReward {
 		return state;
 	}
 
-	/* Reward function for the angle controller */
 	public static double getRewardAngle(double angle, double vx, double vy) {
 
 		double reward = 0;
@@ -53,102 +68,58 @@ public class StateAndReward {
 		return reward;
 	}
 
-	/* State discretization function for the full hover controller */
 	public static String getStateHover(double angle, double vx, double vy) {
 
-		String state = "OneStateToRuleThemAll";
+		String state = "";
 
-		int angle_res = discretize(angle,31,-Math.PI,Math.PI);
+		state = (angle >= 0) ? "R_" : "L_";
+		int angle_res = discretize(Math.abs(angle), ANGLE_PRECISION, ANGLE_MIN_VALUE, ANGLE_MAX_VALUE);
+		state += angle_res;
 
-		if(angle_res == 15){
-			state = "Up";
-		}
-		else if(angle_res < 15 && angle_res > 11){
-			state = "Left_Strong";
-		}
-		else if(angle_res < 12 && angle_res > 7){
-			state = "Left_Light";
-		}
-		else if(angle_res < 8){
-			state = "Down";
-		}
-		else if(angle_res > 15 && angle_res < 19){
-			state = "Right_Strong";
-		}
-		else if(angle_res > 18 && angle_res < 23){
-			state = "Right_Light";
-		}
-		else if(angle_res > 23){
-			state = "Down";
+		state += (vy >= 0) ? "-D_" : "-U_";
+		int vy_res = discretize2(Math.abs(vy), VY_PRECISION, VY_MIN_VALUE, VY_MAX_VALUE);
+		state += vy_res;
+
+		if(Math.abs(angle) < 0.4){
+			int angle_extra = discretize(Math.abs(angle), 6, 0,0.4);
+			state += "-AP_" + angle_extra;
 		}
 
-		//TODO discretize2 med vy + vx
-		if(vy < 0.01 && vy > -0.01){
-			state += "-Godlike";
-		}
-		else if(vy < 0.1 &&  vy > -0.1){
-			state += "-Master";
-		}
-		else if(vy < 0.3 &&  vy > -0.3){
-			state += "-Good";
-		}
-		else if(vy < 0.6 && vy > -0.6){
-			state += "-OK";
-		}
-		else{
-			state += "-Nothing";
+		if(Math.abs(vy) < 0.8){
+			int vy_extra = discretize(Math.abs(vy), 6, 0,0.8);
+			state += "-YP_" + vy_extra;
 		}
 
+//		state += (vx >= 0) ? "-X_" : "-Z_";
+//		int vx_res = discretize2(Math.abs(vx), VX_PRECISION, VX_MIN_VALUE, VX_MAX_VALUE);
+//		state += vx_res;
+
+// 178
 		return state;
 	}
 
-	/* Reward function for the full hover controller */
 	public static double getRewardHover(double angle, double vx, double vy) {
 
 		double reward = 0;
 
-		int angle_res = discretize(angle,31,-Math.PI,Math.PI);
+		int angle_res = discretize(Math.abs(angle), ANGLE_PRECISION, ANGLE_MIN_VALUE, ANGLE_MAX_VALUE);
+		reward += (ANGLE_PRECISION - angle_res) * ANGLE_SCALING_FACTOR;
 
-		if(angle_res == 15){
-			reward = 100;
-		}
-		else if(angle_res < 15 && angle_res > 11){
-			reward = 45;
-		}
-		else if(angle_res < 12 && angle_res > 7){
-			reward = 20;
-		}
-		else if(angle_res < 8){
-			reward = 0;
-		}
-		else if(angle_res > 15 && angle_res < 19){
-			reward = 45;
-		}
-		else if(angle_res > 18 && angle_res < 23){
-			reward = 20;
-		}
-		else if(angle_res > 23){
-			reward = 0;
-		}
+		int vy_res = discretize2(Math.abs(vy), VY_PRECISION, VY_MIN_VALUE, VY_MAX_VALUE);
+		reward += (VY_PRECISION - vy_res) * VY_SCALING_FACTOR;
 
-		//TODO discretize2 med vy + vx
-	//	int middle = 15;
-	//	int vy_res = discretize2(vy,middle * 2 + 1, -2,2);
-		if(vy < 0.01 && vy > -0.01){
-			reward += 200;
-		}
-		else if(vy < 0.1 &&  vy > -0.1){
-			reward += 100;
-		}
-		else if(vy < 0.3 &&  vy > -0.3){
-			reward += 50;
-		}
-		else if(vy < 0.6 && vy > -0.6){
-			reward += 10;
-		}
-		else{
-			reward += 0;
-		}
+//		int vx_res = discretize2(Math.abs(vx), VX_PRECISION, VX_MIN_VALUE, VX_MAX_VALUE);
+//		reward += (VX_PRECISION - vx_res) * VX_SCALING_FACTOR;
+
+	if(Math.abs(angle) < 0.4){
+		int angle_extra = discretize(Math.abs(angle), 6, 0,0.4);
+		reward += (6 - angle_extra) * 5;
+	}
+
+	if(Math.abs(vy) < 0.8){
+		int vy_extra = discretize(Math.abs(vy), 6, 0,0.8);
+		reward += (6 - vy_extra) * 4;
+	}
 
 		return reward;
 	}
@@ -197,6 +168,7 @@ public class StateAndReward {
 	// otherwise a value between 0 and nrValues-1 is returned.
 	// ///////////////////////////////////////////////////////////
 	public static int discretize2(double value, int nrValues, double min, double max) {
+
 		double diff = max - min;
 
 		if (value < min) {
