@@ -1,27 +1,19 @@
 public class StateAndReward {
 
-	public static int ANGLE_RESOLUTION = 6;
-	public static int ANGLE_REWARD_FACTOR = 7;
+	public static int ANGLE_PRECISION = 10;
+	public static int ANGLE_SCALING_FACTOR = 7;
 	public static int ANGLE_MIN_VALUE = 0;
 	public static double ANGLE_MAX_VALUE = Math.PI;
 
-	public static int VY_RESOLUTION = 6;
-	public static int VY_REWARD_FACTOR = 10;
+	public static int VY_PRECISION = 10;
+	public static int VY_SCALING_FACTOR = 10;
 	public static int VY_MIN_VALUE = 0;
 	public static int VY_MAX_VALUE = 5;
 
-	public static int VX_RESOLUTION = 3;
-	public static int VX_REWARD_FACTOR = 3; //2
+	public static int VX_PRECISION = 3;
+	public static int VX_SCALING_FACTOR = 3; //2
 	public static int VX_MIN_VALUE = 0;
 	public static int VX_MAX_VALUE = 1; //2
-
-	// FINE TUNING
-
-	public static double ANGLE_TUNING_LIMIT = 0.4;
-	public static int ANGLE_TUNING_REWARD_FACTOR = 5;
-
-	public static double VY_TUNING_LIMIT = 0.8;
-	public static int VY_TUNING_REWARD_FACTOR = 5;
 
 	// TODO 1 state för x
 	// skriv om kod för precision så den är fin.
@@ -80,24 +72,21 @@ public class StateAndReward {
 
 		String state = "";
 
-		double abs_angle = Math.abs(angle);
-		double abs_vy = Math.abs(vy);
-
 		state = (angle >= 0) ? "R_" : "L_";
-		int angle_res = discretize(abs_angle, ANGLE_RESOLUTION	, ANGLE_MIN_VALUE, ANGLE_MAX_VALUE);
+		int angle_res = discretize(Math.abs(angle), ANGLE_PRECISION, ANGLE_MIN_VALUE, ANGLE_MAX_VALUE);
 		state += angle_res;
 
 		state += (vy >= 0) ? "-D_" : "-U_";
-		int vy_res = discretize2(abs_vy, VY_RESOLUTION, VY_MIN_VALUE, VY_MAX_VALUE);
+		int vy_res = discretize2(Math.abs(vy), VY_PRECISION, VY_MIN_VALUE, VY_MAX_VALUE);
 		state += vy_res;
 
-		if(abs_angle < ANGLE_TUNING_LIMIT){
-			int angle_extra = discretize(abs_angle, 6, 0, ANGLE_TUNING_LIMIT);
+		if(Math.abs(angle) < 0.4){
+			int angle_extra = discretize(Math.abs(angle), 6, 0,0.4);
 			state += "-AP_" + angle_extra;
 		}
 
-		if(abs_vy < VY_TUNING_LIMIT){
-			int vy_extra = discretize(abs_vy, 6, 0, VY_TUNING_LIMIT);
+		if(Math.abs(vy) < 0.8){
+			int vy_extra = discretize(Math.abs(vy), 6, 0,0.8);
 			state += "-YP_" + vy_extra;
 		}
 
@@ -113,29 +102,26 @@ public class StateAndReward {
 
 		double reward = 0;
 
-		double abs_angle = Math.abs(angle);
-		double abs_vy = Math.abs(vy);
+		int angle_res = discretize(Math.abs(angle), ANGLE_PRECISION, ANGLE_MIN_VALUE, ANGLE_MAX_VALUE);
+		reward += (ANGLE_PRECISION - angle_res) * ANGLE_SCALING_FACTOR;
 
-		int angle_res = discretize(abs_angle, ANGLE_RESOLUTION, ANGLE_MIN_VALUE, ANGLE_MAX_VALUE);
-		reward += (ANGLE_RESOLUTION - angle_res) * ANGLE_REWARD_FACTOR;
-
-		int vy_res = discretize2(abs_vy, VY_RESOLUTION, VY_MIN_VALUE, VY_MAX_VALUE);
-		reward += (VY_RESOLUTION - vy_res) * VY_REWARD_FACTOR;
+		int vy_res = discretize2(Math.abs(vy), VY_PRECISION, VY_MIN_VALUE, VY_MAX_VALUE);
+		reward += (VY_PRECISION - vy_res) * VY_SCALING_FACTOR;
 
 //		int vx_res = discretize2(Math.abs(vx), VX_PRECISION, VX_MIN_VALUE, VX_MAX_VALUE);
-//		reward += (VX_PRECISION - vx_res) * VX_REWARD_FACTOR;
+//		reward += (VX_PRECISION - vx_res) * VX_SCALING_FACTOR;
 
-		if(abs_angle < ANGLE_TUNING_LIMIT){
-			int angle_extra = discretize(abs_angle, 6, 0, ANGLE_TUNING_LIMIT);
-			reward += (6 - angle_extra) * ANGLE_TUNING_REWARD_FACTOR;
-		}
+	if(Math.abs(angle) < 0.4){
+		int angle_extra = discretize(Math.abs(angle), 6, 0,0.4);
+		reward += (6 - angle_extra) * 5;
+	}
 
-		if(abs_vy < VY_TUNING_LIMIT){
-			int vy_extra = discretize(abs_vy, 6, 0, VY_TUNING_LIMIT);
-			reward += (6 - vy_extra) * VY_TUNING_REWARD_FACTOR;
-		}
+	if(Math.abs(vy) < 0.8){
+		int vy_extra = discretize(Math.abs(vy), 6, 0,0.8);
+		reward += (6 - vy_extra) * 4;
+	}
 
-			return reward;
+		return reward;
 	}
 
 	// ///////////////////////////////////////////////////////////

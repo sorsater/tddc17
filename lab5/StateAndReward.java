@@ -1,22 +1,43 @@
 public class StateAndReward {
 
-	public static int ANGLE_PRECISION = 10;
-	public static int ANGLE_SCALING_FACTOR = 7;
-	public static int ANGLE_MIN_VALUE = 0;
-	public static double ANGLE_MAX_VALUE = Math.PI;
+	// angle
+	public static int ANGLE_REWARD = 10;
+	public static int ANGLE_PRECISION = 6;
+	public static double ANGLE_LIMIT = Math.PI;
 
-	public static int VY_PRECISION = 10;
-	public static int VY_SCALING_FACTOR = 10;
-	public static int VY_MIN_VALUE = 0;
-	public static int VY_MAX_VALUE = 5;
+	public static int ANGLE_TUNING_REWARD = 15;
+	public static int ANGLE_TUNING_PRECISION = 6;
+	public static double ANGLE_TUNING_LIMIT = 0.3; //ANGLE_LIMIT / 10;
 
-	public static int VX_PRECISION = 3;
-	public static int VX_SCALING_FACTOR = 3; //2
-	public static int VX_MIN_VALUE = 0;
-	public static int VX_MAX_VALUE = 1; //2
+	// velocity
+	public static int VY_REWARD = 8;
+	public static int VY_PRECISION = 6;
+	public static double VY_LIMIT = 8;
 
-	// TODO 1 state för x
-	// skriv om kod för precision så den är fin.
+	public static int VY_TUNING_REWARD = 12; // 6
+	public static int VY_TUNING_PRECISION = 6;
+	public static double VY_TUNING_LIMIT = 2; //VY_LIMIT / 5;
+
+	// magic constants to tune the "perfect mode"
+	// is in three levels
+	public static double ANGLE_1 = 0.02;
+	public static double ANGLE_2 = 0.05;
+	public static double ANGLE_3 = 0.1;
+
+	public static double VY_1 = 0.02;
+	public static double VY_2 = 0.05;
+	public static double VY_3 = 0.2;
+
+	public static double VX_1 = 0.07;
+	public static double VX_2 = 0.1;
+	public static double VX_3 = 0.3;
+
+	public static int REWARD_1 = 5000;
+	public static int REWARD_2 = 2000;
+	public static int REWARD_3 = 500;
+
+
+
 
 	public static String getStateAngle(double angle, double vx, double vy) {
 
@@ -71,56 +92,87 @@ public class StateAndReward {
 	public static String getStateHover(double angle, double vx, double vy) {
 
 		String state = "";
+		double angle_abs = Math.abs(angle);
+		double vy_abs = Math.abs(vy);
+		double vx_abs = Math.abs(vx);
 
-		state = (angle >= 0) ? "R_" : "L_";
-		int angle_res = discretize(Math.abs(angle), ANGLE_PRECISION, ANGLE_MIN_VALUE, ANGLE_MAX_VALUE);
+		// angle
+		// raw tuning
+		state = (angle >= 0) ? "AH_" : "AV_";
+		int angle_res = discretize(angle_abs, ANGLE_PRECISION, 0, ANGLE_LIMIT);
 		state += angle_res;
 
-		state += (vy >= 0) ? "-D_" : "-U_";
-		int vy_res = discretize2(Math.abs(vy), VY_PRECISION, VY_MIN_VALUE, VY_MAX_VALUE);
+		// fine tuning if low value
+		if(angle_abs < ANGLE_TUNING_LIMIT){
+			int angle_extra = discretize(angle_abs, ANGLE_TUNING_PRECISION, 0, ANGLE_TUNING_LIMIT);
+			state += "-AF_" + angle_extra;
+		}
+
+		// vertical velocity
+		// raw tuning
+		state += (vy >= 0) ? "-YD_" : "-YU_";
+		int vy_res = discretize2(vy_abs, VY_PRECISION, 0, VY_LIMIT);
 		state += vy_res;
 
-		if(Math.abs(angle) < 0.4){
-			int angle_extra = discretize(Math.abs(angle), 6, 0,0.4);
-			state += "-AP_" + angle_extra;
+		// fine tuning if low value
+		if(vy_abs < VY_TUNING_LIMIT){
+			int vy_extra = discretize(vy_abs, VY_TUNING_PRECISION, 0, VY_TUNING_LIMIT);
+			state += "-YF_" + vy_extra;
 		}
 
-		if(Math.abs(vy) < 0.8){
-			int vy_extra = discretize(Math.abs(vy), 6, 0,0.8);
-			state += "-YP_" + vy_extra;
+		if(angle_abs < ANGLE_1 && vy_abs < VY_1 && vx_abs < VX_1){
+			state += "GODLIKE";
+		}
+		else if(angle_abs < ANGLE_2 && vy_abs < VY_2 && vx_abs < VX_2){
+			state += "godlike";
 		}
 
-//		state += (vx >= 0) ? "-X_" : "-Z_";
-//		int vx_res = discretize2(Math.abs(vx), VX_PRECISION, VX_MIN_VALUE, VX_MAX_VALUE);
-//		state += vx_res;
+		if(angle_abs < ANGLE_3 && vy_abs < VY_3 && vx_abs < VX_3){
+			state += "insane";
+		}
 
-// 178
 		return state;
 	}
 
 	public static double getRewardHover(double angle, double vx, double vy) {
 
 		double reward = 0;
+		double angle_abs = Math.abs(angle);
+		double vy_abs = Math.abs(vy);
+		double vx_abs = Math.abs(vx);
 
-		int angle_res = discretize(Math.abs(angle), ANGLE_PRECISION, ANGLE_MIN_VALUE, ANGLE_MAX_VALUE);
-		reward += (ANGLE_PRECISION - angle_res) * ANGLE_SCALING_FACTOR;
+		// angle
+		// raw tuning
+		int angle_res = discretize(angle_abs, ANGLE_PRECISION, 0, ANGLE_LIMIT);
+		reward += (ANGLE_PRECISION - angle_res) * ANGLE_REWARD;
 
-		int vy_res = discretize2(Math.abs(vy), VY_PRECISION, VY_MIN_VALUE, VY_MAX_VALUE);
-		reward += (VY_PRECISION - vy_res) * VY_SCALING_FACTOR;
+		// fine tuning if low value
+		if(angle_abs < ANGLE_TUNING_LIMIT){
+			int angle_extra = discretize(angle_abs, ANGLE_TUNING_PRECISION, 0, ANGLE_TUNING_LIMIT);
+			reward += (ANGLE_TUNING_PRECISION - angle_extra) * ANGLE_TUNING_REWARD;
+		}
 
-//		int vx_res = discretize2(Math.abs(vx), VX_PRECISION, VX_MIN_VALUE, VX_MAX_VALUE);
-//		reward += (VX_PRECISION - vx_res) * VX_SCALING_FACTOR;
+		// vertical velocity
+		// raw tuning
+		int vy_res = discretize2(vy_abs, VY_PRECISION, 0, VY_LIMIT);
+		reward += (VY_PRECISION - vy_res) * VY_REWARD;
 
-	if(Math.abs(angle) < 0.4){
-		int angle_extra = discretize(Math.abs(angle), 6, 0,0.4);
-		reward += (6 - angle_extra) * 5;
-	}
+		// fine tuning if low value
+		if(vy_abs < VY_TUNING_LIMIT){
+			int vy_extra = discretize(vy_abs, VY_TUNING_PRECISION, 0, VY_TUNING_LIMIT);
+			reward += (VY_TUNING_PRECISION - vy_extra) * VY_TUNING_REWARD;
+		}
 
-	if(Math.abs(vy) < 0.8){
-		int vy_extra = discretize(Math.abs(vy), 6, 0,0.8);
-		reward += (6 - vy_extra) * 4;
-	}
-
+		// magic constants to give the rocket "perfect" states
+		if(angle_abs < ANGLE_1 && vy_abs < VY_1 && vx_abs < VX_1){
+			reward += 5000;
+		}
+		else if(angle_abs < ANGLE_2 && vy_abs < VY_2 && vx_abs < VX_2){
+			reward += 2000;
+		}
+		else if(angle_abs < ANGLE_3 && vy_abs < VY_3 && vx_abs < VX_3){
+			reward += 500;
+		}
 		return reward;
 	}
 
