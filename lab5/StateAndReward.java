@@ -12,23 +12,23 @@ public class StateAndReward {
 	// angle
 	// raw
 	public static int ANGLE_REWARD = 10;
-	public static int ANGLE_PRECISION = 6;
-	public static double ANGLE_LIMIT = Math.PI;
+	public static int ANGLE_PRECISION = 3;
+	public static double ANGLE_LIMIT = Math.PI / 2;
 
 	// fine tuning
 	public static int ANGLE_TUNING_REWARD = 15;
-	public static int ANGLE_TUNING_PRECISION = 6;
+	public static int ANGLE_TUNING_PRECISION = 3;
 	public static double ANGLE_TUNING_LIMIT = 0.3; //ANGLE_LIMIT / 10;
 
 	// velocity
 	// raw
 	public static int VY_REWARD = 8;
-	public static int VY_PRECISION = 6;
+	public static int VY_PRECISION = 3;
 	public static double VY_LIMIT = 8;
 
 	// fine tuning
 	public static int VY_TUNING_REWARD = 12; // 6
-	public static int VY_TUNING_PRECISION = 6;
+	public static int VY_TUNING_PRECISION = 3;
 	public static double VY_TUNING_LIMIT = 2; //VY_LIMIT / 5;
 
 	// magic constants to tune the "perfect mode"
@@ -131,13 +131,13 @@ public class StateAndReward {
 			state += "-YF_" + vy_extra;
 		}
 
+		state += (vx >= 0) ? "RI" : "LE";
 		if(angle_abs < ANGLE_1 && vy_abs < VY_1 && vx_abs < VX_1){
 			state += "GODLIKE";
 		}
 		else if(angle_abs < ANGLE_2 && vy_abs < VY_2 && vx_abs < VX_2){
 			state += "GREAT";
 		}
-
 		if(angle_abs < ANGLE_3 && vy_abs < VY_3 && vx_abs < VX_3){
 			state += "GOOD";
 		}
@@ -176,14 +176,15 @@ public class StateAndReward {
 
 		// magic constants to give the rocket "perfect" states
 		if(angle_abs < ANGLE_1 && vy_abs < VY_1 && vx_abs < VX_1){
-			reward += 5000;
+			reward += REWARD_1;
 		}
 		else if(angle_abs < ANGLE_2 && vy_abs < VY_2 && vx_abs < VX_2){
-			reward += 2000;
+			reward += REWARD_2;
 		}
 		else if(angle_abs < ANGLE_3 && vy_abs < VY_3 && vx_abs < VX_3){
-			reward += 500;
+			reward += REWARD_3;
 		}
+
 		return reward;
 	}
 

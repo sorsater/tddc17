@@ -54,7 +54,7 @@ The different components of Q-learning are:
 													
 \textbf{Try turning off exploration from the start before learning. What tends to happen? Explain why this happens in your report.}
 
-It will get stuck in a local optimum and will not perform well. This is because it doesn't test new things and can't get out of the local optimum.
+It will get stuck in a local optimum and will not perform well. This is because it doesn't test new things and can't get a higher reward.
 
 \section {Part III - hover}
 \textbf{Description of the implementation}
@@ -63,9 +63,7 @@ We take in to consideration the angle, vy and vx.
 
 Our solution is based on that if we can keep a straight angle and a low vertical velocity, the rocket will only drift very little.
 
-The most important parameters are the angle and the vertical speed. We use the discretize function to split the values in to 20 states each and give them rewards linearly.
-
-We do this on two levels, a raw tuning and a fine tuning. This is to limit the number of states but still perform well. 
+The most important parameters are the angle and the vertical speed. We split up the parameters into two parts, one raw tuning (to quickly get to a desired state), and a fine tuning (to get to the perfect state). We use the discretize function to split the values in to several sections and give them rewards linearly.
 
 The horizontal velocity is only used to reward if the rocket have a very low velocity. 
 
