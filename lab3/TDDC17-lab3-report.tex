@@ -104,7 +104,13 @@ After P(Survives) = 0.99505
 
 \textbf{It is possible to model any function in propositional logic with Bayesian Networks. What does this fact say about the complexity of exact inference in Bayesian Networks? What alternatives are there to exact inference?}
 
-Yes it is possible. However, the complexity grows exponentially in worst case. The alternative is approximative inference.
+% Old answer:  \\
+% Yes it is possible. However, the complexity grows exponentially in worst case. The alternative is approximative inference.
+
+New answer in swedish: \\
+I ett Bayesiskt nätverk växer komplexiteten väldigt snabbt vilket gör att det blir väldigt prestandakrävande. I värsta fall fås komplexiteten, för n variabler, $O(n*2^n)$. I Propositional logic är komplexiteten $O(2^n)$ vilket gör att komplexiteten i Bayesiska nätverk är värre.
+
+Alternativen till exact inference är att arbeta med approximationer. En approximationsmetod är Monte Carlo simuleringar där slumpen används. Monte Carlo kan ge en väldigt bra approximation!
 
 \section {Part 4}
 \subsection{Question 2}
